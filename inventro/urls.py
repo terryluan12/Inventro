@@ -27,5 +27,6 @@ router.register(r'cart', CartViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
+    path('', include('dashboard.urls'))
 ]
