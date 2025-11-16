@@ -1,22 +1,13 @@
+from django.conf import settings
 from django.db import models
 
-from users.models import User
-from products.models import Item
-
-
 class Cart(models.Model):
+    # Use the real auth user model (defaults to django.contrib.auth.models.User)
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="carts"
     )
-    items = models.ManyToManyField(
-        Item, 
-        through='CartItem',
-        related_name='carts'
-    )
+    # Keep your chosen structure; list of {"sku": "...", "qty": N} works fine
+    items = models.JSONField(default=list, blank=True)
 
-class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-    added_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Cart #{self.pk} for {self.user}"
