@@ -23,25 +23,15 @@ from cart.views import CartViewSet
 from dashboard import views as dash_views
 
 router = DefaultRouter()
-router.register(r'items', ItemViewSet)
-router.register(r'cart', CartViewSet)
+router.register(r"items", ItemViewSet, basename="item")
+router.register(r"cart", CartViewSet, basename="cart")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
-    # REST API routers already in your project
-    path('api/', include(router.urls)),
-
-    # Metrics for dashboard "small boxes"
-    path('api/metrics/', dash_views.metrics, name='api-metrics'),
-
-    # Built-in auth endpoints (also gives you /accounts/login and /accounts/logout)
-    path('accounts/', include('django.contrib.auth.urls')),
-
-    # App pages (intro, dashboard, inventory, login, etc.)
-    path('', include('dashboard.urls')),
-
-    path('api/search/', dash_views.api_search, name='api_search'),
-
+    path("admin/", admin.site.urls),
+    path("api/", include(router.urls)),
+    path("api/metrics/", dash_views.metrics_api, name="metrics"),
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("", include("dashboard.urls")),
 ]
+
 
