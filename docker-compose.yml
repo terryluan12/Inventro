@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"] 
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - inventro-network
+
+  web:
+    build: .
+    expose:
+      - 8000
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - staticfiles:/app/staticfiles
+    networks:
+      - inventro-network
+  nginx:
+    image: nginx:1-alpine
+    container_name: nginx_proxy
+    ports:
+    - 9944:80
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - staticfiles:/staticfiles
+    depends_on:
+      - web
+    networks:
+      - inventro-network
+
+volumes:
+  pgdata:
+  staticfiles:
+
+networks:
+  inventro-network:
+    driver: bridge
