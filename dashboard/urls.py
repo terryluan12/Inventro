@@ -7,6 +7,9 @@ urlpatterns = [
     path('dashboard/', views.index, name='dashboard_home'),
     path('inventory', views.inventory, name='dashboard_inventory'),
     path('cart', views.cart, name='cart'),
+    path('login', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout', auth_views.LogoutView.as_view(), name='logout'),  # <-- add this
+]
 
     # Login & Logout (use our friendly paths)
     path('login', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
