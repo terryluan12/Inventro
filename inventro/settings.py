@@ -164,3 +164,9 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "no-reply@inventro.local")
 # Comma-separated emails to notify for low-stock alerts (fallback to superusers if empty)
 ALERT_EMAILS = os.getenv("ALERT_EMAILS", "")  # e.g. "ops@example.com,owner@example.com"
 
+# --- OpenSearch ---
+OPENSEARCH_URL = os.getenv("OPENSEARCH_URL", "")           # e.g. "https://os.example.com:9200"
+OPENSEARCH_USER = os.getenv("OPENSEARCH_USER", "")
+OPENSEARCH_PASSWORD = os.getenv("OPENSEARCH_PASSWORD", "")
+OPENSEARCH_INDEX = os.getenv("OPENSEARCH_INDEX", "items")
+
