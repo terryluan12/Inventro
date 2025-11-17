@@ -1,6 +1,6 @@
 # Inventro Architecture Analysis
 
-**Date:** November 2024  
+**Date:** November 17, 2025  
 **Analysis of:** Persistent Storage, PostgreSQL Indexes, and System Architecture
 
 ---
@@ -322,4 +322,4 @@ Then add `RunPython` operations or `AddIndex` operations in the migration files.
 ---
 
 **Document Version:** 1.0  
-**Last Updated:** November 2024
+**Last Updated:** November 17, 2025
