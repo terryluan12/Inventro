@@ -1,13 +1,16 @@
-# Generated for local dev to create the InventoryItem table up-front.
+# inventory/migrations/0001_initial.py
 from django.db import migrations, models
-import django.conf
+import django.db.models.deletion
+from django.conf import settings
+
 
 class Migration(migrations.Migration):
 
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ('products', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -16,14 +19,17 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
-                ('category', models.CharField(blank=True, max_length=255)),
-                ('quantity', models.IntegerField(default=0)),
                 ('location', models.CharField(blank=True, max_length=255)),
+                ('quantity', models.PositiveIntegerField(default=0)),
+                ('reorder_level', models.PositiveIntegerField(default=10)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.SET_NULL, related_name='inventory_items_created', to='auth.user')),
-                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=models.deletion.SET_NULL, related_name='inventory_items_updated', to='auth.user')),
+                ('created_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_inventory_items', to=settings.AUTH_USER_MODEL)),
+                ('updated_by', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='updated_inventory_items', to=settings.AUTH_USER_MODEL)),
+                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='inventory_items', to='products.item')),
             ],
-            options={'ordering': ['name']},
+            options={
+                'ordering': ['name'],
+            },
         ),
     ]
