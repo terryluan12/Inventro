@@ -52,7 +52,10 @@ ROOT_URLCONF = "inventro.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],   # <-- add project-level templates/
+        "DIRS": [
+            BASE_DIR / "templates",            # keep this (even if empty)
+            BASE_DIR / "inventro" / "templates",  # <-- add this
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -63,6 +66,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 
 WSGI_APPLICATION = "inventro.wsgi.application"
