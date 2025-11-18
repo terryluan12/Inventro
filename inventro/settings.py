@@ -47,10 +47,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "inventro.urls"
 
+
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],  # app templates
+        "DIRS": [BASE_DIR / "templates"],   # <-- add project-level templates/
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -61,6 +63,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = "inventro.wsgi.application"
 
