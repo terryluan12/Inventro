@@ -1,32 +1,29 @@
-# inventro/urls.py
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
-
 from dashboard import views as dash_views
-from users import views as user_views  # for add_user view
+from users import views as user_views  # for add_user
 
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # Home -> login
+    # Redirect root to login
     path("", RedirectView.as_view(pattern_name="login", permanent=False)),
-    # Handle old /index.html hits (from stale links)
+
+    # Redirect old /index.html to dashboard
     path("index.html", RedirectView.as_view(pattern_name="dashboard", permanent=False)),
 
-    # Auth using Django built-ins
-    path(
-        "login",
-        auth_views.LoginView.as_view(template_name="frontend/login.html"),
-        name="login",
-    ),
+    # Login/Logout using built-in auth views and your template
+    path("login", auth_views.LoginView.as_view(template_name="frontend/login.html"), name="login"),
     path("logout", auth_views.LogoutView.as_view(next_page="login"), name="logout"),
 
-    # App views
+    # Main dashboard
     path("dashboard/", dash_views.index, name="dashboard"),
+
+    # Add user (superuser only)
     path("users/add/", user_views.add_user, name="add_user"),
 
-    # API
+    # API endpoint for dashboard stats
     path("api/metrics/", dash_views.metrics_api, name="metrics"),
 ]
