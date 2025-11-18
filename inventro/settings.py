@@ -49,12 +49,16 @@ ROOT_URLCONF = "inventro.urls"
 
 
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        # Tell Django to look in both the project-level templates folder
+        # and inventro/templates/ for templates like frontend/login.html
         "DIRS": [
-            BASE_DIR / "templates",            # keep this (even if empty)
-            BASE_DIR / "inventro" / "templates",  # <-- add this
+            BASE_DIR / "templates",
+            BASE_DIR / "inventro" / "templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -66,6 +70,12 @@ TEMPLATES = [
         },
     },
 ]
+
+STATICFILES_DIRS = [
+    # This makes static files under inventro/static/ visible for {% static %} tags
+    BASE_DIR / "inventro" / "static",
+]
+
 
 
 
