@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
 
+{#
+  Add Item page for the inventory module. This template provides a simple form
+  for creating a new inventory item along with its related product record. Only
+  staff and administrators can access this page. The layout mirrors that of
+  the inventory page, with a sidebar and topbar for navigation consistency.
+#}
+
 {% block content %}
   <div class="layout">
+    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-icon"><i class="bi bi-box-seam"></i></div>
@@ -11,10 +19,12 @@
           <div class="brand-sub">Inventory Platform</div>
         </div>
       </div>
+
       <nav class="menu">
         {% if user.is_authenticated and user.is_superuser %}
           <a class="menu-link" href="{% url 'add_user' %}"><i class="bi bi-person-plus"></i> Add User</a>
         {% endif %}
+
         <div class="menu-heading">Main</div>
         <a class="menu-link" href="{% url 'dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a>
         <a class="menu-link" href="{% url 'inventory' %}"><i class="bi bi-archive"></i> Inventory</a>
@@ -25,19 +35,27 @@
           <a class="menu-link" href="{% url 'analytics' %}"><i class="bi bi-graph-up"></i> Analytics</a>
         {% endif %}
       </nav>
+
       <div class="sidebar-footer">
         <div class="avatar">{{ user.username|slice:":2"|upper }}</div>
         <div class="user-meta">
           <div class="user-name">
             {% if user.is_authenticated %}
               {{ user.username }}
-            {% else %}Guest{% endif %}
+            {% else %}
+              Guest
+            {% endif %}
           </div>
           <div class="user-role">
-            {% if user.is_superuser %}Admin
-            {% elif user.is_staff %}Manager
-            {% elif user.is_authenticated %}Staff
-            {% else %}Not signed in{% endif %}
+            {% if user.is_superuser %}
+              Admin
+            {% elif user.is_staff %}
+              Manager
+            {% elif user.is_authenticated %}
+              Staff
+            {% else %}
+              Not signed in
+            {% endif %}
           </div>
         </div>
         {% if user.is_authenticated %}
@@ -48,6 +66,7 @@
       </div>
     </aside>
 
+    <!-- Main content -->
     <main class="main">
       <header class="topbar">
         <h1 class="h5 mb-0">Add Inventory Item</h1>
