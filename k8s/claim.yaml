@@ -3,10 +3,12 @@ kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
   namespace: inventro
+  labels:
+    app: postgres
 spec:
+  storageClassName: do-block-storage
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
-  storageClassName: do-block-storage

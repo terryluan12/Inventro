@@ -34,6 +34,3 @@ urlpatterns = [
     path('api/metrics/', metrics, name='metrics'),
     path('', include('dashboard.urls'))
 ]
-
-if settings.URL_PREFIX:
-    urlpatterns = [path(f'{settings.URL_PREFIX}/', include(urlpatterns))]

@@ -16,6 +16,17 @@ spec:
       containers:
         - name: postgres-pvc
           image: postgres:15
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -d "$POSTGRES_DB" -U "$POSTGRES_USER"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
@@ -33,11 +44,10 @@ spec:
             limits:
               cpu: "100m"
               memory: "512Mi"
-          ports:
-            - containerPort: 5432
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-data
+              subPath: data
       volumes:
         - name: postgres-data
           persistentVolumeClaim:
