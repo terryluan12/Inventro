@@ -30,10 +30,12 @@ kind load docker-image inventory-app:local --name inventory-local
 # 3) Apply manifests
 kubectl apply -n inventory -f k8s/configmap.yaml
 kubectl apply -n inventory -f k8s/secrets.yaml
-kubectl apply -n inventory -f k8s/pvc.yaml
-kubectl apply -n inventory -f k8s/postgres-deployment.yaml
+kubectl apply -f k8s/postgres-local.yaml
 kubectl apply -n inventory -f k8s/deployment.yaml
 kubectl apply -n inventory -f k8s/cronjob-backup.yaml
+
+# (The Postgres pod now uses an ephemeral emptyDir volume for hassle-free local testing.
+#  Data disappears when the pod is deleted.)
 
 # 4) Smoke checks
 kubectl get pods -n inventory -w
@@ -64,17 +66,21 @@ docker build -t inventory-app:local .
 # 3) Apply manifests (no kind load needed)
 kubectl apply -n inventory -f k8s/configmap.yaml
 kubectl apply -n inventory -f k8s/secrets-template.yaml
-kubectl apply -n inventory -f k8s/pvc.yaml
-kubectl apply -n inventory -f k8s/postgres-deployment.yaml
-kubectl apply -n inventory -f k8s/deployment.yaml
+kubectl apply -f k8s/postgres-local.yaml                // Use postgres.yaml file for production
+
+// For local testing change current deployment.yaml to deployment-prod.yaml and deployment-local.yaml to deployment.yaml
+
+kubectl apply -n inventory -f k8s/deployment.yaml      
 kubectl apply -n inventory -f k8s/cronjob-backup.yaml
+
+# Same emptyDir note as in Option A applies here.
 
 # 4) Smoke checks
 kubectl get pods -n inventory -w
 kubectl logs -n inventory deploy/inventory-deployment --tail=100
 
 # 5) Port-forward
-kubectl port-forward -n inventory svc/inventory-service 8000:80
+kubectl port-forward -n inventory svc/inventory-service 8080:80
 
 # 6) Optional: migrations
 kubectl exec -n inventory deploy/inventory-deployment -- python manage.py migrate
@@ -88,3 +94,7 @@ minikube delete
 - Django responsive at http://localhost:8000 after port-forward
 - Logs clean: `kubectl logs -n inventory deploy/inventory-deployment`
 - DB: migrations run without errors
+
+> For cloud deployments (e.g., DigitalOcean Kubernetes), use `k8s/postgres.yml`
+> instead of `k8s/postgres-local.yaml` so PostgreSQL binds to a persistent
+> DigitalOcean Block Storage volume.

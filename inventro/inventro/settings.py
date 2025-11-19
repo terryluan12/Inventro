@@ -26,7 +26,26 @@ SECRET_KEY = 'django-insecure-@pynwz3x9pxe9ne_93$mg4@u5r%hr98-vok@urwf=u7o%33z=o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+def _parse_hosts(raw: str | None) -> list[str]:
+    if not raw:
+        return []
+    return [host.strip() for host in raw.split(",") if host.strip()]
+
+
+ALLOWED_HOSTS = _parse_hosts(os.getenv("DJANGO_ALLOWED_HOSTS"))
+
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+        "[::1]",
+        # Allow in-cluster DNS names/IP probes used during local K8s testing.
+        "inventory-service",
+        "inventory-service.inventory",
+        "inventory-service.inventory.svc",
+        "inventory-service.inventory.svc.cluster.local",
+        "*",
+    ]
 
 
 # Application definition

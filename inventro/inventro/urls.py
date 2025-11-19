@@ -21,6 +21,7 @@ from rest_framework.routers import DefaultRouter
 from inventory.views import ItemViewSet
 from cart.views import CartViewSet
 from dashboard.api_views import dashboard_stats, metrics
+from .health import healthz, ready
 
 router = DefaultRouter()
 router.register(r'items', ItemViewSet)
@@ -31,5 +32,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/stats/', dashboard_stats, name='dashboard_stats'),
     path('api/metrics/', metrics, name='metrics'),
+    path('healthz', healthz, name='healthz'),
+    path('ready', ready, name='ready'),
     path('', include('dashboard.urls'))
 ]
