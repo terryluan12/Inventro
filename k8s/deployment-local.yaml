@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: inventory
-          image: registry.digitalocean.com/${DOCR_REGISTRY}/inventory-app:latest
+          image: inventory-app:local
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
