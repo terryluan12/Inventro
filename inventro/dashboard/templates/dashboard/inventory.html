@@ -123,15 +123,11 @@
                       {% endif %}
                     </td>
                     <td class="text-end">{{ item.cost }}</td>
+                    <td class="text-end">{{ item.cost }}</td>
                     <td class="text-end">
                       <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-secondary" href="#"><i class="bi bi-pencil"></i></a>
-                        <div id="delete-error-{{ item.pk }}" class="text-danger small d-none" role="alert" aria-live="polite"></div>
-                        <form method="POST" action="{% url 'inventory_delete' item.pk %}" class="d-inline" hx-post="{% url 'inventory_delete' item.pk %}" hx-target="closest tr" hx-swap="outerHTML" hx-on:error="document.getElementById('delete-error-{{ item.pk }}').innerText = event.detail.xhr.responseText; document.getElementById('delete-error-{{ item.pk }}').classList.remove('d-none');" onsubmit="return handleInventoryDelete(this, '{{ item.name|escapejs }}', {{ item.in_stock|default_if_none:0 }})">
-                          {% csrf_token %}
-                          <input type="hidden" name="force" value="">
-                          <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                        </form>
+                        <a class="btn btn-sm btn-outline-secondary" href="{% url 'dashboard_edit_item' item.id %}"><i class="bi bi-pencil"></i></a>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                       </div>
                     </td>
                   </tr>
@@ -143,15 +139,6 @@
                   {% endfor %}
                 </tbody>
               </table>
-              {% if page_obj.paginator.num_pages > 1 %}
-              <nav class="mt-2">
-                <ul class="pagination pagination-sm mb-0">
-                  {% if page_obj.has_previous %}
-                    <li class="page-item"><a class="page-link" href="{% url 'dashboard_inventory' %}?page={{ page_obj.previous_page_number }}&per_page={{ per_page }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&category={{ request.GET.category|urlencode }}" hx-get="/partials/inventory?page={{ page_obj.previous_page_number }}&per_page={{ per_page }}&q={{ request.GET.q|urlencode }}&status={{ request.GET.status|urlencode }}&category={{ request.GET.category|urlencode }}" hx-target="#inventory-area" hx-swap="innerHTML">Prev</a></li>
-                  {% else %}
-                    <li class="page-item disabled"><a class="page-link">Prev</a></li>
-                  {% endif %}
-              {% endif %}
 
             <!-- Pagination (future: HTMX partials) -->
             <nav class="mt-2">
