@@ -273,11 +273,6 @@ def edit_item(request, item):
     categories = ItemCategory.objects.all()
     return render(request, "dashboard/item_form.html", { "item": item, "categories": categories })
     
-def login(request):
-    """
-    Render a simple introduction/landing page.
-    """
-    return render(request, "login.html")
 
 @login_required
 def cart(request):

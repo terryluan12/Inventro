@@ -15,10 +15,15 @@
             </p>
           </div>
 
-          <form action="{% url 'dashboard_home' %}" method="GET">
+          <form action="{% url 'login_page' %}" method="POST">
+            {% csrf_token %}
+            {% if form.errors %}
+              <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
             <div class="mb-3">
               <label class="form-label">Email</label>
               <input
+                name="username"
                 class="form-control form-control-lg"
                 type="email"
                 placeholder="admin@inventro.com"
@@ -28,6 +33,7 @@
             <div class="mb-3">
               <label class="form-label">Password</label>
               <input
+                name="password"
                 class="form-control form-control-lg"
                 type="password"
                 placeholder="••••••••"
