@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden, HttpResponse
 from django.contrib import messages
-from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import logout
 from cart.models import Cart
 from inventory.models import Item, ItemCategory
 from django.db import models
@@ -12,9 +12,11 @@ from django.http import JsonResponse
 from inventory.serializers import ItemSerializer
 import json
 
-def dashboard_home(request):
+@login_required
+def home(request):
     return render(request, "dashboard/home.html")
 
+@login_required
 def inventory(request):
     items = Item.objects.all()
 
@@ -77,6 +79,91 @@ def inventory(request):
 
     # return render(request, "dashboard/inventory.html", {"items": page_obj.object_list, "categories": categories, "page_obj": page_obj, "per_page": per_page})
 
+
+def analytics(request):
+    # Analytics overview page
+    return render(request, "dashboard/analytics.html")
+
+@login_required
+def add_item(request):
+    categories = ItemCategory.objects.all()
+    return render(request, "dashboard/item_form.html", {"categories": categories})
+    # # Add items page - handle raw POST data (no ModelForm)
+    # error = None
+    # if request.method == "POST":
+    #     name = (request.POST.get("name") or "").strip()
+    #     sku = (request.POST.get("SKU") or "").strip()
+    #     category_value = request.POST.get("category")
+    #     in_stock_raw = request.POST.get("in_stock")
+    #     total_amount_raw = request.POST.get("total_amount")
+    #     location = (request.POST.get("location") or "").strip()
+    #     price_raw = request.POST.get("price")
+    #     description = (request.POST.get("description") or "").strip()
+
+    #     # Basic validation
+    #     if not name or not sku or not category_value:
+    #         error = "Name, SKU and Category are required."
+    #     else:
+    #         # Resolve category by name only: find or create
+    #         category_value = (category_value or "").strip()
+    #         cat_obj = ItemCategory.objects.filter(name__iexact=category_value).first()
+    #         if cat_obj is None:
+    #             # create a new category with the provided name
+    #             cat_obj = ItemCategory.objects.create(name=category_value)
+    #         category_pk = cat_obj.pk
+
+    #         try:
+    #             in_stock = int(in_stock_raw) if in_stock_raw not in (None, "") else 0
+    #         except ValueError:
+    #             in_stock = 0
+
+    #         try:
+    #             total_amount = int(total_amount_raw) if total_amount_raw not in (None, "") else 0
+    #         except ValueError:
+    #             total_amount = 0
+
+    #         try:
+    #             from decimal import Decimal
+    #             price = Decimal(price_raw) if price_raw not in (None, "") else Decimal('0')
+    #         except Exception:
+    #             price = None
+    #             error = ("Invalid price value") if error is None else error
+
+    #         # Only save if there is no error
+    #         if error is None:
+    #             # Create item using the resolved category_pk
+    #             item = Item(
+    #                 name=name,
+    #                 SKU=sku,
+    #                 category_id=category_pk,
+    #                 in_stock=in_stock,
+    #                 total_amount=total_amount,
+    #                 location=location or None,
+    #                 price=price or 0,
+    #                 description=description or None,
+    #                 created_by=request.user,
+    #                 updated_by=request.user,
+    #             )
+    #             item.save()
+    #             return redirect("dashboard_inventory")
+
+    # # GET or invalid POST - render template with categories and optional error
+    # categories = ItemCategory.objects.all()
+    # return render(request, "dashboard/item_form.html", {"categories": categories, "error": error})
+
+
+def logout_view(request):
+    """Log the user out and redirect to the login page.
+
+    Accepts GET or POST so clicking a link will also log out.
+    """
+
+    logout(request)
+
+    messages.info(request, "You have been signed out.")
+    return redirect('dashboard_home')
+
+###############################################################################################################
 
 def partials_inventory(request):
     """Return only the table rows for HTMX updates."""
@@ -183,77 +270,6 @@ def delete_item(request, pk):
     # GET: show a simple confirmation template if you want one.
     return render(request, "dashboard/confirm_delete.html", {"item": item})
 
-def analytics(request):
-    # Analytics overview page
-    return render(request, "dashboard/analytics.html")
-
-@login_required
-def add_item(request):
-    categories = ItemCategory.objects.all()
-    return render(request, "dashboard/item_form.html", {"categories": categories})
-    # # Add items page - handle raw POST data (no ModelForm)
-    # error = None
-    # if request.method == "POST":
-    #     name = (request.POST.get("name") or "").strip()
-    #     sku = (request.POST.get("SKU") or "").strip()
-    #     category_value = request.POST.get("category")
-    #     in_stock_raw = request.POST.get("in_stock")
-    #     total_amount_raw = request.POST.get("total_amount")
-    #     location = (request.POST.get("location") or "").strip()
-    #     price_raw = request.POST.get("price")
-    #     description = (request.POST.get("description") or "").strip()
-
-    #     # Basic validation
-    #     if not name or not sku or not category_value:
-    #         error = "Name, SKU and Category are required."
-    #     else:
-    #         # Resolve category by name only: find or create
-    #         category_value = (category_value or "").strip()
-    #         cat_obj = ItemCategory.objects.filter(name__iexact=category_value).first()
-    #         if cat_obj is None:
-    #             # create a new category with the provided name
-    #             cat_obj = ItemCategory.objects.create(name=category_value)
-    #         category_pk = cat_obj.pk
-
-    #         try:
-    #             in_stock = int(in_stock_raw) if in_stock_raw not in (None, "") else 0
-    #         except ValueError:
-    #             in_stock = 0
-
-    #         try:
-    #             total_amount = int(total_amount_raw) if total_amount_raw not in (None, "") else 0
-    #         except ValueError:
-    #             total_amount = 0
-
-    #         try:
-    #             from decimal import Decimal
-    #             price = Decimal(price_raw) if price_raw not in (None, "") else Decimal('0')
-    #         except Exception:
-    #             price = None
-    #             error = ("Invalid price value") if error is None else error
-
-    #         # Only save if there is no error
-    #         if error is None:
-    #             # Create item using the resolved category_pk
-    #             item = Item(
-    #                 name=name,
-    #                 SKU=sku,
-    #                 category_id=category_pk,
-    #                 in_stock=in_stock,
-    #                 total_amount=total_amount,
-    #                 location=location or None,
-    #                 price=price or 0,
-    #                 description=description or None,
-    #                 created_by=request.user,
-    #                 updated_by=request.user,
-    #             )
-    #             item.save()
-    #             return redirect("dashboard_inventory")
-
-    # # GET or invalid POST - render template with categories and optional error
-    # categories = ItemCategory.objects.all()
-    # return render(request, "dashboard/item_form.html", {"categories": categories, "error": error})
-
 def post_item(request):
     data = json.loads(request.body)
     data["category_id"] = int(data["category"])
@@ -282,22 +298,6 @@ def cart(request):
     cart_items = cart_obj.cart_items.select_related('item').all()
     return render(request, "cart.html", {"cart_items": cart_items, 'page_num': 1})
 
-def logout_view(request):
-    """Log the user out and redirect to the login page.
-
-    Accepts GET or POST so clicking a link will also log out.
-    """
-    # perform logout
-    try:
-        auth_logout(request)
-    except Exception:
-        pass
-    try:
-        messages.info(request, "You have been signed out.")
-    except Exception:
-        pass
-    # Redirect to the named login URL
-    return redirect('login')
 def metrics_api(request):
     """
     Lightweight JSON API used by the dashboard JS to fetch
