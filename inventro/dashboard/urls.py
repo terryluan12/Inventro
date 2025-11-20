@@ -21,4 +21,5 @@ urlpatterns = [
     path('cart', views.cart, name='cart'),
     path('login', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout', views.logout_view, name='logout'),
+    path('post_item', views.post_item, name="post_item")
 ]
