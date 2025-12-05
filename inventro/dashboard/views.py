@@ -217,15 +217,6 @@ def delete_item(request, pk):
     # GET: show a simple confirmation template if you want one.
     return render(request, "dashboard/confirm_delete.html", {"item": item})
 
-@login_required
-def cart(request):
-    """
-    Display the current user's cart.  Creates one if it doesn't exist.
-    """
-    cart_obj, _ = Cart.objects.get_or_create(user=request.user)
-    cart_items = cart_obj.cart_items.select_related('item').all()
-    return render(request, "cart.html", {"cart_items": cart_items, 'page_num': 1})
-
 def metrics_api(request):
     """
     Lightweight JSON API used by the dashboard JS to fetch

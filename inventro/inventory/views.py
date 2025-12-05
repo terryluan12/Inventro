@@ -145,3 +145,13 @@ def remove_from_inventory_view(request, item_id):
     item.in_stock += 1
     item.save()
     return HttpResponse(status=204)
+
+
+@login_required
+def cart(request):
+    """
+    Display the current user's cart.  Creates one if it doesn't exist.
+    """
+    cart_obj, _ = Cart.objects.get_or_create(user=request.user)
+    cart_items = cart_obj.cart_items.select_related('item').all()
+    return render(request, "cart/cart.html", {"cart_items": cart_items, 'page_num': 1})
