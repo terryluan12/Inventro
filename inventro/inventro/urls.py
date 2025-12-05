@@ -34,5 +34,6 @@ urlpatterns = [
     path('api/stats/', dashboard_stats, name='dashboard_stats'),
     path('api/metrics/', metrics, name='metrics'),
     path('api/activity/', recent_activity, name='recent_activity'),
-    path('', include('dashboard.urls'))
+    path('dashboard/', include('dashboard.urls')),
+    path('cart/', include('cart.urls')),
 ]

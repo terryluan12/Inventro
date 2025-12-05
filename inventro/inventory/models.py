@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from authentication.models import User
 
 
 class ItemCategory(models.Model):
@@ -62,3 +63,13 @@ class Item(models.Model):
         if getattr(self, 'location', None):
             return f"{self.name} ({self.location})"
         return f"{self.name}"
+
+
+class InventoryItem(models.Model):
+    borrower = models.ForeignKey(
+        User,
+        on_delete=models.RESTRICT,
+        related_name="inventory",
+    )
+    item = models.ForeignKey(Item, on_delete=models.RESTRICT)
+    quantity = models.IntegerField(default=1)

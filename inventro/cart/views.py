@@ -1,11 +1,14 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+
+from inventory.models import Item, InventoryItem
 from .models import Cart, CartItem
 from .serializers import CartSerializer
-from inventory.models import Item
+from authentication.models import User
+from django.contrib.auth.decorators import login_required
 
 
 class CartViewSet(viewsets.ModelViewSet):
@@ -72,3 +75,31 @@ class CartViewSet(viewsets.ModelViewSet):
         cart.cart_items.all().delete()
         serializer = CartSerializer(cart)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+@login_required
+def my_inventory_view(request):
+    """Render the user's inventory page."""
+    user = User.objects.get(id=request.user.id)
+    inventory_items = user.inventory.all()
+    print(inventory_items)
+    return render(request, 'cart/my_inventory.html', {'inventory_items': inventory_items})
+
+@login_required
+def add_to_inventory_view(request, item_id):
+    """Add an item to the user's inventory."""
+    user = User.objects.get(id=request.user.id)
+    item = get_object_or_404(Item, id=item_id)
+    inventory_item = InventoryItem(borrower=user, item=item)
+    inventory_item.save()
+    user.inventory.add(inventory_item)
+    return HttpResponse(status=204)
+
+@login_required
+def remove_from_inventory_view(request, item_id):
+    """Remove an item from the user's inventory."""
+    user = User.objects.get(id=request.user.id)
+    item = get_object_or_404(Item, id=item_id)
+    inventory_item = get_object_or_404(InventoryItem, borrower=user, item=item)
+    inventory_item.delete()
+    return HttpResponse(status=204)
