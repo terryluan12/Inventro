@@ -12,8 +12,8 @@
             {# Only staff / admins see Add Item button #}
             {% if user.is_authenticated %}
               {% if user.is_staff or user.is_superuser %}
-                <a class="btn btn-primary btn-sm" href="{% url 'dashboard_add_item' %}">
-                  <i class="bi bi-plus-circle me-1"></i>Add Item
+                <a class="btn btn-primary btn-sm" href="{% url 'dashboard_cart' %}">
+                  <i class="bi bi-cart me-1"></i>See my Cart
                 </a>
               {% endif %}
             {% endif %}
