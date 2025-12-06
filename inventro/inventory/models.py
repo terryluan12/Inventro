@@ -76,13 +76,19 @@ class Cart(models.Model):
         through='CartItem',
         related_name='carts'
     )
+    
+    def __str__(self):
+        return f"Cart<{self.pk}> for {self.user.first_name}"
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     added_at = models.DateTimeField(auto_now_add=True)
+    reorder_level = models.PositiveIntegerField(default=10)
 
+    def __str__(self):
+        return f"{self.item.name} x{self.quantity}"
 
 class InventoryItem(models.Model):
     borrower = models.ForeignKey(

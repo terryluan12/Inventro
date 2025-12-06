@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inventro-config
+  namespace: inventro
+data:
+  DJANGO_SETTINGS_MODULE: inventro.settings
+  DEBUG: "0"
+  ALLOWED_HOSTS: "*"
+  LOW_STOCK_THRESHOLD: "10"
+
+  # DB settings for Django default DB (Postgres service below)
+  DB_ENGINE: django.db.backends.postgresql
+  DB_NAME: inventro
+  DB_USER: inventro
+  DB_HOST: postgres
+  DB_PORT: "5432"
