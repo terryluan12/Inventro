@@ -10,6 +10,4 @@ from . import views
 urlpatterns = [
     path('', views.index, name='dashboard_home'),
     path('analytics/', views.analytics, name='dashboard_analytics'),
-    path('item/', views.item_form, name='dashboard_add_item'),
-    path('item/<int:item>', views.item_form, name='dashboard_edit_item'),
 ]

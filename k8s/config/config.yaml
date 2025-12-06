@@ -9,3 +9,4 @@ data:
   POSTGRES_HOST: example-postgres-host
   POSTGRES_PORT: example-postgres-port
   POSTGRES_USER: example-postgres-user
+  DEBUG: "true"

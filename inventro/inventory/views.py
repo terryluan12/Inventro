@@ -163,6 +163,17 @@ def inventory(request):
     
     return render(request, "cart/inventory.html", {'items': items, "categories": categories, "full_inventory": True})
 
+
+@login_required
+def item_form(request, id=None):
+    item = Item.objects.filter(id=id).first() if id else None
+    categories = ItemCategory.objects.all()
+    
+    return render(request, "cart/item_form.html", {
+        "item": item,
+        "categories": categories,
+    })
+
 @login_required
 def my_inventory_view(request):
     """Render the user's inventory page."""
