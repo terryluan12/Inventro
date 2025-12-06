@@ -53,6 +53,21 @@ class CartAPIView(APIView):
         cart_item.save()
         return redirect("dashboard_cart")
    
+    def patch(self, request, format=None):
+        """Update the quantity of an item in the current user's cart."""
+        item_id = int(request.data.get('item_id'))
+        quantity = int(request.data.get('quantity'))
+        
+        cart = get_object_or_404(Cart, user=request.user)
+        cart_item = get_object_or_404(CartItem, cart=cart, item__id=item_id)
+
+        if quantity > cart_item.item.in_stock:
+            return Response({"detail": "Not enough stock available."}, status=status.HTTP_400_BAD_REQUEST)
+
+        cart_item.quantity = quantity
+        cart_item.save()
+        return Response(status=status.HTTP_200_OK)
+    
     def delete(self, request, format=None):
         """Remove an item from the current user's cart."""
         cart = get_object_or_404(Cart, user=request.user)
@@ -63,19 +78,18 @@ class CartAPIView(APIView):
         if cart_item.quantity >quantity:
             return Response({"detail": "Quantity to remove exceeds quantity in cart."}, status=status.HTTP_400_BAD_REQUEST)
         elif cart_item.quantity == quantity:
-            cart_item.delete()
-            return redirect("dashboard_cart")
-        else:
             cart_item.quantity -= quantity
             cart_item.save()
+            
+            if cart_item.quantity == 0:
+                cart_item.delete()
         
-            return redirect("dashboard_cart")
+            return Response(status=status.HTTP_204_NO_CONTENT)
     
 @login_required
 def add_to_inventory_view(request):
     """Add an item to the user's inventory."""
     user = User.objects.get(id=request.user.id)
-    
     cart = user.cart.first()
     
     for cart_item in cart.cart_items.all():
@@ -102,27 +116,29 @@ def add_to_inventory_view(request):
     return redirect("user_inventory_page")
 
 @login_required
-def remove_from_inventory_view(request, item_id):
+def return_to_inventory_view(request):
     """Remove an item from the user's inventory."""
     user = User.objects.get(id=request.user.id)
+    item_id = int(request.POST.get('item_id'))
+    quantity = int(request.POST.get('quantity'))
+    
     item = get_object_or_404(Item, id=item_id)
-
-    if not user.inventory.filter(item=item).exists():
-        return HttpResponse(status=404, content="Item not found in inventory")
-
     inventory_item = get_object_or_404(InventoryItem, borrower=user, item=item)
-    if inventory_item.quantity > 1:
-        inventory_item.quantity -= 1
+    
+    if inventory_item.quantity >= quantity:
+        inventory_item.quantity -= quantity
         inventory_item.save()
-    else:
+    
+    if inventory_item.quantity == 0:
         inventory_item.delete()
 
-    item.in_stock += 1
+    item.in_stock += quantity
     item.save()
-    return HttpResponse(status=204)
+    return redirect("user_inventory_page")
 
 @login_required
 def inventory(request):
+    user = User.objects.get(id=request.user.id)
     categories = ItemCategory.objects.all()
     items = filter_items(request)
 
@@ -131,6 +147,15 @@ def inventory(request):
 
     paginator = Paginator(items, per_page)
     items = paginator.get_page(page_number)
+    
+    cart = user.cart.first()
+    
+    if cart:
+        for item in items:
+            cart_item = cart.cart_items.filter(item=item).first()
+            if cart_item:
+                item.in_stock -= cart_item.quantity
+            
         
     if 'HX-Request' in request.headers:
         return render(request, 'cart/partials/inventory_table.html', {'items': items, "categories": categories,})

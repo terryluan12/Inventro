@@ -10,7 +10,7 @@ from . import views
 urlpatterns = [
     path('my_inventory/', views.my_inventory_view, name='user_inventory_page'),
     path('add_inventory/', views.add_to_inventory_view, name='inventory_add_cart'),
-    path('remove_inventory/<int:item_id>/', views.remove_from_inventory_view, name='inventory_remove_item'),
+    path('remove_inventory/', views.return_to_inventory_view, name='inventory_return_item'),
     path('cart/', views.cart, name='dashboard_cart'),
     path('inventory/', views.inventory, name='dashboard_inventory'),
     path('inventory/delete/<int:pk>/', views.delete_item, name='inventory_delete'),

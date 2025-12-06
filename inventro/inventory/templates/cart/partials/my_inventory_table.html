@@ -15,7 +15,9 @@
           </tr>
         </thead>
         <tbody id="inventory-tbody">
+          {% csrf_token %}
           {% for inv_item in items %}
+          {% include 'cart/partials/return_item_modal.html' with item=item %}
           <tr>
             <td>
               <div class="fw-semibold">{{ inv_item.item.name }}</div>
@@ -29,14 +31,13 @@
 
             <td class="text-end">
               <div class="btn-group">
-                {% csrf_token %}
-                <a
+                <button
+                  type="button"
                   class="btn btn-sm btn-outline-secondary"
-                  hx-post="{% url 'inventory_remove_item' inv_item.item.id %}"
-                  hx-swap="none"
-                  hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                  data-bs-toggle="modal"
+                  data-bs-target="#modal{{ item.id }}"
                   ><i class="bi bi-cart-dash"></i
-                ></a>
+                ></button>
                 
               </div>
             </td>
