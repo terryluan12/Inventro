@@ -13,7 +13,6 @@ class Company(models.Model):
 class Profile(models.Model):
     # existing fields...
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    first_name = models.CharField(max_length=255)
     age = models.IntegerField(null=True, blank=True)
     address = models.CharField(max_length=255, blank=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
@@ -38,4 +37,4 @@ class Profile(models.Model):
     )
 
     def __str__(self):
-        return self.first_name
+        return self.user.get_username()

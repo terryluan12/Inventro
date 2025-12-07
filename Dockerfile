@@ -19,8 +19,8 @@ RUN pip install --upgrade pip \
  && pip install --no-cache-dir -r requirements.txt
 
 # Copy app
-COPY inventro .
+COPY inventro inventro
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-CMD ["sh", "entrypoint.sh"]
+CMD ["bash", "entrypoint.sh"]

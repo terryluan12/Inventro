@@ -185,33 +185,26 @@ The final system satisfied all course technical requirements and maintained a re
    Use dashboards for day-to-day visibility into stock levels and recent activity. Operators can also review Kubernetes metrics when investigating performance or availability.
 
 ## Development Guide
+Local development is quite simple thanks to the magic of Docker and Docker Compose!
 
 ### Prerequisites
-
+- Git
 - Docker and Docker Compose
-- Python 3.11+ with `pip`
-- Access credentials for PostgreSQL and any third-party stores (see `.env` templates)
 
 ### Local Setup
+With the magic of Docker
+1. **Clone the repository**  
+    You can clone this repository using  
+    `git clone https://github.com/terryluan12/Inventro`
 
-1. **Clone the repository** and create a virtual environment:  
-   `python -m venv .venv && source .venv/bin/activate`
+2. **Ensure the environment variables are set**  
+    For more information, check out the [environment variable section](#environment-variables)
 
-2. **Install dependencies:**  
-   `pip install -r requirements.txt`
-
-3. **Create environment files** from the provided templates (e.g., database URL, secret key, object storage credentials).
-
-4. **Start services locally:**  
+3. **Start services locally:**  
    `docker compose -f compose.dev.yml up --build`  
    This launches Django, PostgreSQL, and supporting services.
 
-5. **Run migrations and create a superuser:**  
-   `docker compose -f compose.dev.yml exec web python manage.py migrate`  
-   then  
-   `docker compose -f compose.dev.yml exec web python manage.py createsuperuser`
-
-6. **Access the app:**  
+4. **Access the app:**  
    Open `http://localhost:8000` for the UI or `http://localhost:8000/api/` for REST endpoints.
 
 ### Testing
@@ -243,6 +236,44 @@ The final system satisfied all course technical requirements and maintained a re
 - **Live URL:**  
   Provide the cluster or load balancer URL here, for example:  
   `https://inventro.example.com`.
+
+
+## Environment Variables
+Inventro requires several environment variables to be set before it can run, whether locally, through docker, docker compose, or kubernetes.
+
+### Local/Docker/Docker-Compose Deployment
+  1. Copy the file `.env.example`
+  2. Rename the copy to `.env`
+  3. Update the values in `.env` as needed
+
+### Kubernetes Deployment
+When deploying with Kubernetes, environment variables should be configrued in either `k8s/config` or `k8s/secrets`
+
+Unlike when deploying locally or through Docker/Docker-Compose, most values will need to be provided manually, as they have been left out intentionally for security reasons
+
+Below is a table of environment variables that need to be set:
+
+| **Variable**              | **Default**         | **Description**                                                                   |
+|---------------------------|---------------------|-----------------------------------------------------------------------------------|
+| DEBUG*                    | 0                   | Django mode. Assign 1 for debug                                                   |
+| DJANGO_SECRET_KEY         | django_insecure_key | Django secret key                                                                 |
+| DJANGO_SUPERUSER_USERNAME | admin               | Default inventro admin username                                                   |
+| DJANGO_SUPERUSER_EMAIL    | admin@inventro.com  | Default inventro admin email                                                      |
+| DJANGO_SUPERUSER_PASSWORD | admin123            | Default inventro admin email password                                             |
+| POSTGRES_DB               | inventro            | Postgres database name                                                            |
+| POSTGRES_HOST             | localhost           | Postgres database host                                                            |
+| POSTGRES_USER             | postgres            | Postgres user username.                                                           |
+| POSTGRES_PASSWORD         | password            | Postgres user password                                                            |
+| POSTGRES_PORT             | 5432                | Postgres server open port                                                         |
+| ALLOWED_HOST              | localhost           | Allowed hosts                                                                     |
+| CSRF_TRUSTED_ORIGIN       | localhost:8000      | Trusted CSRF Origins                                                              |
+| DO_SPACES_KEY**           |                     | The S3-compatible API Key                                                         |
+| DO_SPACES_SECRET**        |                     | The S3-compatible Secret Key                                                      |
+| DO_SPACES_REGION**        |                     | Region where the S3-compatible bucket is hosted                                   |
+| DO_SPACES_BUCKET**        |                     | The name of the S3-compatible Bucket                                              |
+
+\* DEBUG is automatically set when running compose.dev.yaml, compose.prod.yaml, and when running the k8s  
+\*\* Only available through docker-compose
 
 ## Individual Contributions
 

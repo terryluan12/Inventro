@@ -34,21 +34,15 @@ spec:
           env:
             - name: GUNICORN_CMD_ARGS
               value: "--access-logfile - --error-logfile -"
-            - name: DJANGO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: inventro-django-secret
-                  key: DJANGO_SECRET_KEY
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: inventro-postgres-secret
-                  key: POSTGRES_PASSWORD
           envFrom:
             - configMapRef:
                 name: inventro-db-config
             - secretRef:
                 name: inventro-url-secret
+            - secretRef:
+                name: inventro-django-secret
+            - secretRef:
+                name: inventro-postgres-secret
           resources:
             requests:
               cpu: "100m"

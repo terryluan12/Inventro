@@ -4,8 +4,6 @@ services:
     restart: always
     env_file:
       - .env
-    environment:
-      DEBUG: true
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -18,21 +16,37 @@ services:
 
   web:
     build: .
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
     depends_on:
       db:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      DEBUG: 0
+      POSTGRES_HOST: db
+      CSRF_TRUSTED_ORIGIN: http://localhost:9944
     volumes:
-      - ./inventro:/app
+      - staticfiles:/app/inventro/staticfiles
     networks:
       - inventro-network
-  
+  nginx:
+    image: nginx:1-alpine
+    container_name: nginx_proxy
+    ports:
+    - 9944:80
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - staticfiles:/staticfiles
+    depends_on:
+      - web
+    networks:
+      - inventro-network
+
 volumes:
   pgdata:
-  inventro:
+  staticfiles:
 
 networks:
   inventro-network:

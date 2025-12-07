@@ -18,41 +18,15 @@ spec:
                     secretKeyRef:
                       name: inventro-postgres-secret
                       key: POSTGRES_PASSWORD
-                - name: PGUSER
-                  valueFrom:
-                    configMapKeyRef:
-                      name: inventro-db-config
-                      key: POSTGRES_USER
-                - name: DB_NAME
-                  valueFrom:
-                    configMapKeyRef:
-                      name: inventro-db-config
-                      key: POSTGRES_DB
-                - name: DB_HOST
-                  valueFrom:
-                    configMapKeyRef:
-                      name: inventro-db-config
-                      key: POSTGRES_HOST
-                - name: SPACES_KEY
-                  valueFrom:
-                    secretKeyRef:
-                      name: inventro-do-secret
-                      key: DO_SPACES_KEY
-                - name: SPACES_SECRET
-                  valueFrom:
-                    secretKeyRef:
-                      name: inventro-do-secret
-                      key: DO_SPACES_SECRET
-                - name: SPACES_REGION
-                  valueFrom:
-                    secretKeyRef:
-                      name: inventro-do-secret
-                      key: DO_SPACES_REGION
-                - name: SPACES_BUCKET
-                  valueFrom:
-                    secretKeyRef:
-                      name: inventro-do-secret
-                      key: DO_SPACES_BUCKET
+              envFrom:
+                - configMapRef:
+                    name: inventro-db-config
+                - secretRef:
+                    name: inventro-postgres-secret
+                - secretRef:
+                    name: inventro-django-secret
+                - secretRef:
+                    name: inventro-do-secret
               command:
                 - /bin/sh
                 - -c
@@ -66,11 +40,11 @@ spec:
                   TIMESTAMP=$(date +%F_%H%M%S)
                   FNAME="/tmp/backup-${TIMESTAMP}.sql"
                   echo "Dumping DB to ${FNAME}..."
-                  pg_dump -h "$DB_HOST" -U "$PGUSER" -d "$DB_NAME" -F p > "$FNAME"
-                  echo "$SPACES_KEY"
+                  pg_dump -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -F p > "$FNAME"
+                  echo "$DO_SPACES_KEY"
                   echo "Configuring mc for Spaces..."
-                  ./mc alias set dok8s "https://$SPACES_REGION.digitaloceanspaces.com" "$SPACES_KEY" "$SPACES_SECRET"
-                  echo "Uploading ${FNAME} to Spaces bucket ${SPACES_BUCKET}..."
-                  ./mc cp "$FNAME" dok8s/"$SPACES_BUCKET"/backup-"$TIMESTAMP".sql
+                  ./mc alias set dok8s "https://$DO_SPACES_REGION.digitaloceanspaces.com" "$DO_SPACES_KEY" "$DO_SPACES_SECRET"
+                  echo "Uploading ${FNAME} to Spaces bucket ${DO_SPACES_BUCKET}..."
+                  ./mc cp "$FNAME" dok8s/"$DO_SPACES_BUCKET"/backup-"$TIMESTAMP".sql
                   echo "Backup done."
           restartPolicy: OnFailure

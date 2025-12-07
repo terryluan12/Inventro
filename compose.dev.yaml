@@ -2,8 +2,6 @@ services:
   db:
     image: postgres:15
     restart: always
-    environment:
-      DEBUG: false
     env_file:
       - .env
     volumes:
@@ -18,33 +16,24 @@ services:
 
   web:
     build: .
-    expose:
-      - 8000
+    ports:
+      - 8000:8000
     depends_on:
       db:
         condition: service_healthy
     env_file:
       - .env
+    environment:
+      DEBUG: 1
+      POSTGRES_HOST: db
     volumes:
-      - staticfiles:/app/staticfiles
+      - .:/app
     networks:
       - inventro-network
-  nginx:
-    image: nginx:1-alpine
-    container_name: nginx_proxy
-    ports:
-    - 9944:80
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - staticfiles:/staticfiles
-    depends_on:
-      - web
-    networks:
-      - inventro-network
-
+  
 volumes:
   pgdata:
-  staticfiles:
+  inventro:
 
 networks:
   inventro-network:

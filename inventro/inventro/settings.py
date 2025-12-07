@@ -18,13 +18,13 @@ INVENTRO_LOW_STOCK_THRESHOLD = int(os.getenv("LOW_STOCK_THRESHOLD", "10"))
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django_insecure_key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", False)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1', os.getenv("ALLOWED_HOST", "terryluan.com")]
-CSRF_TRUSTED_ORIGINS = ['http://localhost:9944', 'http://localhost:8000', os.getenv("CSRF_TRUSTED_ORIGIN", 'https://terryluan.com')]
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOST', 'localhost')]
+CSRF_TRUSTED_ORIGINS = [os.getenv('CSRF_TRUSTED_ORIGIN', 'localhost:8000')]
 
 
 # Application definition
@@ -93,9 +93,9 @@ ASGI_APPLICATION = 'inventro.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("POSTGRES_DB"),
+        'NAME': os.getenv("POSTGRES_DB", "inventro"),
         'USER': os.getenv("POSTGRES_USER", "postgres"),
-        'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD", ""),
         'HOST': os.getenv("POSTGRES_HOST", "localhost"),
         'PORT': os.getenv("POSTGRES_PORT", 5432),
     },
@@ -130,9 +130,6 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [
-    BASE_DIR / "inventro" / "static",
-]
 
 # DRF (unchanged)
 REST_FRAMEWORK = {

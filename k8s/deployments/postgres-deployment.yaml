@@ -27,15 +27,11 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
-          env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: inventro-postgres-secret
-                  key: POSTGRES_PASSWORD
           envFrom:
             - configMapRef:
                 name: inventro-db-config
+            - secretRef:
+                name: inventro-postgres-secret
           
           resources:
             requests:

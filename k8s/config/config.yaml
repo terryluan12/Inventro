@@ -5,8 +5,8 @@ metadata:
   namespace: inventro
   
 data:
-  POSTGRES_DB: inventro_db
-  POSTGRES_HOST: inventro-postgres-service
+  POSTGRES_DB: "inventro"
+  POSTGRES_HOST: "inventro-postgres-service"
   POSTGRES_PORT: "5432"
-  POSTGRES_USER: postgres_user
-  DEBUG: "false"
+  POSTGRES_USER: "postgres_user"
+  DEBUG: "0"
