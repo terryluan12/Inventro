@@ -198,23 +198,21 @@ Local development is quite simple thanks to the magic of Docker and Docker Compo
 
 ### Prerequisites
 - Git
-- Docker and Docker Compose
+- Docker
+- Docker Compose
 
 ### Local Setup
-With the magic of Docker
-1. **Clone the repository**  
-    You can clone this repository using  
+1. **Clone the repository:**   
     `git clone https://github.com/terryluan12/Inventro`
 
-2. **Ensure the environment variables are set**  
+2. **Ensure the environment variables are set:**  
     For more information, check out the [environment variable section](#environment-variables)
 
 3. **Start services locally:**  
    `docker compose -f compose.dev.yml up --build`  
-   This launches Django, PostgreSQL, and supporting services.
-
 4. **Access the app:**  
-   Open `http://localhost:8000` for the UI or `http://localhost:8000/api/` for REST endpoints.
+    Web UI: `http://localhost:800`
+    REST API: `http://localhost:8000/api/`
 
 ### Testing
 
@@ -227,24 +225,33 @@ With the magic of Docker
 - **Static analysis (optional):**  
   Run tools such as `flake8` and `isort` locally to maintain formatting and style consistency.
 
-## Deployment Information
+## Deployment Guide
 
-- **Container registry:**  
-  Built images are tagged and pushed by GitHub Actions to the configured container registry (e.g., DigitalOcean Container Registry).
+### Prerequisites
+- Git
+- Bash
+- Docker
+- Kubernetes (kubectl)
 
-- **Kubernetes manifests:**  
-  Manifests reside in `k8s/` with namespaced Deployments, Services, and PVC claims. Apply them via:  
-  `kubectl apply -k k8s/`.
+### Local Setup
+1. **Clone the repository:**   
+    `git clone https://github.com/terryluan12/Inventro`
 
-- **Backup CronJob:**  
-  `k8s/cronjob-backup.yaml` defines a scheduled job that exports PostgreSQL dumps to object storage (DigitalOcean Spaces) on a schedule, with retention controls documented in the repo.
+2. **Ensure the environment variables are set:**  
+    For more information, check out the [environment variable section](#environment-variables)
 
-- **Ingress:**  
-  Production traffic terminates at a cloud load balancer that forwards requests to the Kubernetes Service for the web app.
+3. **Build and push the Docker Image**  
+    From the inventro root:  
+    `docker build -t inventro-web .`  
+    `docker tag inventro-web <your-registry>/inventro-web:latest`  
+    `docker push <your-registry>/inventro-web:latest`  
+    
+    Currently, the only supported registry is DigitalOcean.  
+    To change the registry change the base url in `k8s/deployments/web-deployment.yaml`
 
-- **Live URL:**  
-  Provide the cluster or load balancer URL here, for example:  
-  `https://inventro.example.com`.
+4. **Deploy the app:**  
+    `cd k8s`  
+    `bash deploy.sh`
 
 
 ## Environment Variables
