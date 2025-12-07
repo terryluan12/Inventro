@@ -8,8 +8,6 @@
 - **Alexander Vicol** — alexander.vicol@mail.utoronto.ca — Student ID: 1008004231
 - **Shubham Panchal** — s.panchal@mail.utoronto.ca — Student ID: 1012431067
 
-> Contact emails for any follow-up questions during grading period.
-
 ## Motivation
 
 In many small and medium-sized businesses, inventory management is still handled through outdated software or manual spreadsheets that lack real-time synchronization, scalability, and reliability. These systems make it difficult to monitor stock levels accurately across distributed warehouses or retail locations. As a result, manual data entry and disconnected systems frequently lead to stockouts, overstocking, and data inconsistencies, all of which negatively affect operational efficiency and customer satisfaction.
@@ -194,7 +192,12 @@ The final system satisfied all course technical requirements and maintained a re
 
 
 ## Development Guide
-Local development is quite simple thanks to the magic of Docker and Docker Compose!
+Local development is quite simple thanks to the magic of Docker and Docker Compose!  
+Inventro uses the compose.dev.yaml configuration, which includes:
+* A PostgreSQL container (based on the `postgres:15` image)
+* An application container built from a custom Dockerfile (based on the `python:3.11-slim` image)  
+
+The application container mounts the project directory, allowing the app to automatically reload when local files change. On startup, the app also seeds the database with default data.
 
 ### Prerequisites
 - Git
@@ -211,7 +214,7 @@ Local development is quite simple thanks to the magic of Docker and Docker Compo
 3. **Start services locally:**  
    `docker compose -f compose.dev.yml up --build`  
 4. **Access the app:**  
-    Web UI: `http://localhost:800`
+    Web UI: `http://localhost:800`  
     REST API: `http://localhost:8000/api/`
 
 ### Testing
@@ -226,6 +229,7 @@ Local development is quite simple thanks to the magic of Docker and Docker Compo
   Run tools such as `flake8` and `isort` locally to maintain formatting and style consistency.
 
 ## Deployment Guide
+For deployment, you can easily deploy using Docker, and Kubernetes!
 
 ### Prerequisites
 - Git
