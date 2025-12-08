@@ -539,10 +539,9 @@ Shubham led the **cloud deployment, orchestration, and CI/CD foundations** for I
   - Kept **Docker Compose** and Kubernetes setups aligned so developers can switch between `docker-compose` and Minikube without code changes, and verified both paths run the app end-to-end.
 
 - **CI/CD Pipeline & Automation**
-  - Implemented the core **CI/CD + Kubernetes workflow** that builds, tags, and pushes Docker images on commits/merges.
-  - Automated deployment so the `main` branch remains **continuously deployable** to the Kubernetes environment.
-  - Added pre-deploy checks (tests/linting) to reduce configuration drift and “works on my machine” issues.
-  - Helped debug image build problems, environment mismatches, and rollout failures to keep deployments stable and reproducible.
+  - Wrote the initial **CI/CD + Kubernetes pipeline script**, outlining the steps to build, tag, and push Docker images for the application.
+  - Set up the basic workflow structure so it can later be extended into a fully automated deployment pipeline for the `main` branch.
+  - Helped troubleshoot early build and environment issues while testing the initial CI/CD script, and documented the steps for future pipeline integration.
 
 - **Inventory CRUD, Add Form & UI Enhancements**
   - Implemented both **“add inventory”** and **“delete inventory”** functionality, wiring URLs, views, and templates so items can be created and removed cleanly in PostgreSQL.
