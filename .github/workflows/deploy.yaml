@@ -35,5 +35,8 @@ jobs:
       - name: Install Kubectl
         run: sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
+      - name: Configure kubectl
+        run: doctl kubernetes cluster kubeconfig save 2e75152c-eaef-4161-ac9a-94ad8c6073a5
+      
       - name: Deploy to DigitalOcean Kubernetes
         run: cd k8s && ./deploy.sh
