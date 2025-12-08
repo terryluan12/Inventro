@@ -4,8 +4,10 @@ cd inventro
 echo "Running makemigrations..."
 python manage.py makemigrations --noinput
 
-echo "Running makemigrations..."
-python manage.py collectstatic
+if [[ $DEBUG == "0" ]]; then
+    echo "Running makemigrations..."
+    python manage.py collectstatic
+fi
 
 
 echo "Running migrate..."
@@ -14,10 +16,13 @@ python manage.py migrate --noinput
 echo "Creating Superuser..."
 python manage.py createsuperuser --noinput 
 
+if [[ $DEBUG != "0" ]]; then
 echo "Populating Database..."
 cd inventory/util
 python populate_database.py
 cd ../..
+fi
+
 
 if [[ $DEBUG == "0" ]]; then
     echo "Starting Gunicorn..."

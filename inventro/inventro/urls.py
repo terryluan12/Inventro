@@ -3,16 +3,15 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from django.conf import settings
 
-from inventory.views import ItemViewSet, CartAPIView
+from inventory.views import ItemCategoryViewSet, ItemViewSet, CartAPIView
 from dashboard.api_views import dashboard_stats, metrics, recent_activity
 
 from django.urls import path
-from django.views.generic import RedirectView
-from django.contrib.auth import views as auth_views
 # from inventro.dashboard.templates import views as dash_views
 
 router = DefaultRouter()
 router.register(r'items', ItemViewSet)
+router.register(r'categories', ItemCategoryViewSet)
 
 urlpatterns = [
     path('', include("authentication.urls")),

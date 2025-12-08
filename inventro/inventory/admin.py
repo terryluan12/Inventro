@@ -25,7 +25,6 @@ class ItemAdmin(admin.ModelAdmin):
         "location",
         "in_stock",
         "total_amount",
-        "reorder_level",
         "created_at",
         "updated_at",
     )

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Cart, CartItem, Item, InventoryItem, ItemCategory
-from .serializers import ItemSerializer
+from .serializers import ItemCategorySerializer, ItemSerializer
 from authentication.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -31,6 +31,10 @@ class ItemViewSet(viewsets.ModelViewSet):
             pass
         instance.save(update_fields=["is_active", "updated_at", "updated_by"])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ItemCategoryViewSet(viewsets.ModelViewSet):
+    queryset = ItemCategory.objects.all()
+    serializer_class = ItemCategorySerializer
 
 class CartAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -115,6 +119,17 @@ def add_to_inventory_view(request):
         cart_item.delete()
     
     return redirect("user_inventory_page")
+
+@login_required
+def add_category(request):
+    if request.method == "POST":
+        name = request.POST.get("category-name")
+        if name:
+            ItemCategory.objects.create(name=name)
+            messages.success(request, f"Category '{name}' added successfully.")
+        else:
+            messages.error(request, "Category name cannot be empty.")
+    return redirect("dashboard_add_item")
 
 @login_required
 def return_to_inventory_view(request):

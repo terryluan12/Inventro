@@ -26,9 +26,10 @@
   <section class="container py-4">
 
     <!-- Search / Filters -->
+    {% if full_inventory %}
     <div class="card shadow-sm mb-3">
       <div class="card-body">
-        <form id="inventory-filters" class="row g-2 align-items-center" hx-get="/inventory" hx-target="#inventory-tbody">
+        <form id="inventory-filters" class="row g-2 align-items-center" hx-get="{% url 'dashboard_inventory' %}" hx-target="#inventory_table" hx-swap="outerHTML">
           <div class="col-12 col-md">
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-search"></i></span>
@@ -78,6 +79,7 @@
         </form>
       </div>
     </div>
+    {% endif %}
 
     {% if full_inventory %}
       {% include 'cart/partials/inventory_table.html' %}

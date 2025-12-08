@@ -25,7 +25,6 @@ class Item(models.Model):
     in_stock = models.IntegerField()
     total_amount = models.IntegerField()
     location = models.TextField()
-    reorder_level = models.PositiveIntegerField(default=10, null=True)
     cost = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     category = models.ForeignKey(
         ItemCategory,
