@@ -530,18 +530,14 @@ _Contribution summary to be added_
 
 ### Shubham Panchal
 
-Shubham led the **cloud deployment, orchestration, and CI/CD foundations** for Inventro, and implemented core **Django inventory and authentication flows**. His main contributions included:
+Shubham led the **cloud deployment and orchestration foundations** for Inventro, and implemented core **Django inventory and authentication flows**. His main contributions included:
 
 - **Cloud Architecture, Kubernetes & Local Orchestration**
   - Designed the overall cloud architecture for Inventro as a containerized **Django + PostgreSQL** application running on **Kubernetes**.
   - Wrote the initial **Kubernetes manifests** (Deployments, Services, Ingress, ConfigMaps/Secrets) that define how the web app and database run in the cluster.
   - Ensured the stack runs cleanly on **local Kubernetes with Minikube**, validating manifests, Ingress rules, and environment configuration in a real cluster.
   - Kept **Docker Compose** and Kubernetes setups aligned so developers can switch between `docker-compose` and Minikube without code changes, and verified both paths run the app end-to-end.
-
-- **CI/CD Pipeline & Automation**
-  - Wrote the initial **CI/CD + Kubernetes pipeline script**, outlining the steps to build, tag, and push Docker images for the application.
-  - Set up the basic workflow structure so it can later be extended into a fully automated deployment pipeline for the `main` branch.
-  - Helped troubleshoot early build and environment issues while testing the initial CI/CD script, and documented the steps for future pipeline integration.
+  - Authored an initial **GitHub Actions workflow** to run Django checks and build/push Docker images, providing a starting point for the team’s CI/CD pipeline.
 
 - **Inventory CRUD, Add Form & UI Enhancements**
   - Implemented both **“add inventory”** and **“delete inventory”** functionality, wiring URLs, views, and templates so items can be created and removed cleanly in PostgreSQL.
@@ -559,9 +555,9 @@ Shubham led the **cloud deployment, orchestration, and CI/CD foundations** for I
 - **Configuration, Secrets & Team Integration**
   - Centralized sensitive settings (database credentials, secret keys, etc.) into **environment variables and Kubernetes secrets**, following good DevSecOps practices.
   - Tuned Django settings (`ALLOWED_HOSTS`, debug flags, static file handling) so the same codebase runs correctly with **Docker Compose**, **Minikube**, and remote Kubernetes deployments.
-  - Collaborated on and reviewed changes that touched deployment, CI/CD, and configuration, helping integrate work on **RBAC/metadata**, **cart features**, and **backup jobs** without breaking the cloud setup.
+  - Collaborated on and reviewed changes that touched deployment, CI, and configuration, helping integrate work on **RBAC/metadata**, **cart features**, and **backup jobs** without breaking the cloud setup.
 
-Overall, Shubham owned the **cloud and delivery backbone** of Inventro **and** the core inventory/auth flows: he ensured the project runs smoothly via **Docker Compose and Minikube**, built a reliable **CI/CD + Kubernetes pipeline**, and delivered a clean inventory experience backed by Django and PostgreSQL.
+Overall, Shubham owned the **cloud and delivery backbone** of Inventro **and** the core inventory/auth flows: he ensured the project runs smoothly via **Docker Compose and Minikube**, and delivered a clean inventory experience backed by Django and PostgreSQL.
 
 
 ## Lessons Learned and Concluding Remarks
