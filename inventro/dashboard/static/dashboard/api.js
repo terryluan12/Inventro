@@ -52,75 +52,6 @@
     return contentType.includes("application/json") ? res.json() : res.text();
   }
 
-  // --- Auth ---
-  async function login(email, password) {
-    // Supports DRF JWT (/api/auth/login/) or custom /api/login
-    try {
-      const data = await apiFetch("/api/auth/login/", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
-      if (data && (data.access || data.token))
-        state.token = data.access || data.token;
-      return data;
-    } catch (e) {
-      // fallback to /api/login
-      const data = await apiFetch("/api/login", {
-        method: "POST",
-        body: JSON.stringify({ email, password }),
-      });
-      if (data && (data.access || data.token))
-        state.token = data.access || data.token;
-      return data;
-    }
-  }
-
-  function logout() {
-    state.token = "";
-  }
-
-  // --- Inventory ---
-  function buildQuery(obj) {
-    const p = new URLSearchParams();
-    Object.entries(obj || {}).forEach(([k, v]) => {
-      if (v !== undefined && v !== null && v !== "") p.append(k, v);
-    });
-    const qs = p.toString();
-    return qs ? `?${qs}` : "";
-  }
-
-  async function getItems(params = {}) {
-    return apiFetch(`/api/items/${buildQuery(params)}`);
-  }
-
-  async function getItem(id) {
-    return apiFetch(`/api/items/${id}/`);
-  }
-
-  async function createItem(payload) {
-    return apiFetch("/api/items/", {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
-  }
-
-  async function updateItem(id, payload) {
-    return apiFetch(`/api/items/${id}/`, {
-      method: "PUT",
-      body: JSON.stringify(payload),
-    });
-  }
-
-  async function patchItem(id, payload) {
-    return apiFetch(`/api/items/${id}/`, {
-      method: "PATCH",
-      body: JSON.stringify(payload),
-    });
-  }
-
-  async function deleteItem(id) {
-    return apiFetch(`/api/items/${id}/`, { method: "DELETE" });
-  }
 
   // --- Dashboard Stats ---
   async function getStats() {
@@ -176,24 +107,10 @@
       };
     }
   }
-  // --- Activity ---
-  async function getActivity() {
-    return apiFetch("/api/activity/");
-  }
 
   window.InventroAPI = {
-    state,
     apiFetch,
-    login,
-    logout,
-    getItems,
-    getItem,
-    createItem,
-    updateItem,
-    patchItem,
-    deleteItem,
     getStats,
     getMetrics,
-    getActivity,
   };
 })(window);

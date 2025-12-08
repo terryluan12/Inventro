@@ -101,7 +101,7 @@ def add_to_inventory_view(request):
         item = cart_item.item
         quantity = cart_item.quantity
         
-        if item.in_stock <= quantity:
+        if item.in_stock < quantity:
             return HttpResponse(status=400, content=f"Not enough {item.name}'s in stock")
         
         if user.inventory.filter(item=item).exists():

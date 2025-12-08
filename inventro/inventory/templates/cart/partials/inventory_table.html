@@ -12,7 +12,7 @@
             <th scope="col">SKU</th>
             {% endif %}
             <th scope="col">Category</th>
-            <th scope="col" class="text-end">Currently Available</th>
+            <th scope="col" class="text-end">In Stock</th>
             <th scope="col" class="text-end">Total Quantity</th>
             <th scope="col">Status</th>
             <th scope="col" class="text-end">Value</th>
@@ -38,7 +38,7 @@
             <td>
               {% if item.in_stock == 0 %}
               <span class="chip chip-danger">Out of Stock</span>
-              {% elif item.in_stock < item.total_amount %}
+              {% elif item.in_stock <= item.low_stock_bar %}
               <span class="chip chip-warning">Low Stock</span>
               {% else %}
               <span class="chip chip-success">In Stock</span>
@@ -48,6 +48,7 @@
             <td class="text-end">
               <div class="btn-group">
                 {% csrf_token %}
+                {% if item.in_stock > 0 %}
                 <button
                   type="button"
                   class="btn btn-sm btn-outline-secondary"
@@ -55,6 +56,7 @@
                   data-bs-target="#modal{{ item.id }}"
                   ><i class="bi bi-cart-plus"></i
                 ></button>
+                {% endif %}
                 <a
                   class="btn btn-sm btn-outline-secondary"
                   href="{% url 'dashboard_edit_item' item.id %}"
@@ -82,6 +84,7 @@
                   hx-on:error="document.getElementById('delete-error-{{ item.pk }}').innerText = event.detail.xhr.responseText; document.getElementById('delete-error-{{ item.pk }}').classList.remove('d-none');"
                   onsubmit="return handleInventoryDelete(this, '{{ item.name|escapejs }}', {{ item.in_stock|default_if_none:0 }})"
                 >
+                {% csrf_token %}
                   <input type="hidden" name="force" value="" />
                   <button
                     type="submit"

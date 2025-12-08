@@ -23,12 +23,14 @@ class Item(models.Model):
     
     sku = models.CharField(max_length=50)
     in_stock = models.IntegerField()
+    low_stock_bar = models.IntegerField()
     total_amount = models.IntegerField()
     location = models.TextField()
     cost = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     category = models.ForeignKey(
         ItemCategory,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        related_name="items",
     )
     # Soft-delete flag: false items are hidden from lists
     is_active = models.BooleanField(default=True)

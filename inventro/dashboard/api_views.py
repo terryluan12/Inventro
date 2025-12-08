@@ -27,7 +27,7 @@ def dashboard_stats(request):
     # Low stock / out of stock
     # total_amount is the minimum quantity threshold
     low_stock_count = active_items.filter(
-        Q(in_stock__lte=F('total_amount')) & Q(in_stock__gt=0)
+        Q(in_stock__lte=F('low_stock_bar')) & Q(in_stock__gt=0)
     ).count()
     out_of_stock_count = active_items.filter(in_stock__lte=0).count()
 
@@ -91,22 +91,18 @@ def metrics(request):
         months_data.append(count)
         months_labels.append(month_start.strftime('%b'))
 
-    # ---- Items by Category (top 5) ----
+    # ---- Items by Category ----
     try:
         # If FK: Item.category -> ItemCategory(name)
-        category_qs = active_items.values('category__name').annotate(count=Count('id')).order_by('-count')[:5]
+        category_qs = active_items.values('category__name').annotate(count=Count('id')).order_by('-count')
         category_labels = [row['category__name'] or 'Uncategorized' for row in category_qs]
         category_counts = [row['count'] for row in category_qs]
     except Exception:
         # If CharField: Item.category
         category_qs = (active_items.exclude(category__isnull=True).exclude(category__exact='')
-                       .values('category').annotate(count=Count('id')).order_by('-count')[:5])
+                       .values('category').annotate(count=Count('id')).order_by('-count'))
         category_labels = [row['category'] or 'Uncategorized' for row in category_qs]
         category_counts = [row['count'] for row in category_qs]
-    # Fallback demo data so the chart isn't empty
-    if not category_counts:
-        category_labels = ["Electronics", "Furniture", "Accessories", "Office"]
-        category_counts = [12, 7, 6, 5]
 
     # ---- Status Trends (last 4 weeks) ----
     weeks_labels, in_stock_data, low_stock_data, out_of_stock_data = [], [], [], []
@@ -117,7 +113,7 @@ def metrics(request):
 
         # Use model fields: in_stock & total_amount (where total_amount is the minimum threshold)
         in_stock = items_before.filter(in_stock__gt=F('total_amount')).count()
-        low_stock = items_before.filter(Q(in_stock__lte=F('total_amount')) & Q(in_stock__gt=0)).count()
+        low_stock = items_before.filter(Q(in_stock__lte=F('low_stock_bar')) & Q(in_stock__gt=0)).count()
         out_stock = items_before.filter(in_stock__lte=0).count()
 
         in_stock_data.append(in_stock)

@@ -156,10 +156,12 @@
           location: document.querySelector("input[name='location']").value,
           category_id: document.querySelector("select[name='category']").value,
           in_stock: document.querySelector("input[name='total_amount']").value,
+          low_stock_bar: String(Math.max(Math.floor(document.querySelector("input[name='total_amount']").value * 0.5), 1)),
           total_amount: document.querySelector("input[name='total_amount']").value,
           cost: document.querySelector("input[name='cost']").value,
           description: document.querySelector("textarea[name='description']").value,
         };
+        console.log("stringified is ", JSON.stringify(item));
         
         fetch(updateUrl, {
           method: method,
@@ -170,9 +172,13 @@
           },
           body: JSON.stringify(item)
         }).then((response) => {
+          if (!response.ok) {
+            console.log("Error: ", response)
+            return;
+          }
             alert("Success!");
             window.location.href = "{% url "dashboard_inventory" %}"
-        }).then((data) => {
+        }).catch((data) => {
           console.log("Error: ", data)
         });
     });

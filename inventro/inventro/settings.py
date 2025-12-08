@@ -12,7 +12,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 LOGIN_URL="/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/login"
-INVENTRO_LOW_STOCK_THRESHOLD = int(os.getenv("LOW_STOCK_THRESHOLD", "10"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -24,7 +23,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django_insecure_key")
 DEBUG = os.getenv("DEBUG", False)
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOST', 'localhost')]
-CSRF_TRUSTED_ORIGINS = [os.getenv('CSRF_TRUSTED_ORIGIN', 'localhost:8000')]
+CSRF_TRUSTED_ORIGINS = [os.getenv('CSRF_TRUSTED_ORIGIN', 'http://localhost:8000')]
 
 
 # Application definition

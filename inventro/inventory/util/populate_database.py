@@ -19,8 +19,8 @@ def populate_item_category(cur: psycopg.Cursor,file_path: str) :
 
 def populate_item(cur: psycopg.Cursor,file_path: str) :
     insert_query = """
-        INSERT INTO inventory_item (name, sku, in_stock, total_amount, cost, category_id, location, is_active, created_at, updated_at) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO inventory_item (name, sku, in_stock, total_amount, cost, category_id, low_stock_bar, location, is_active, created_at, updated_at) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
     random.seed(149302573)
     memo = {}
@@ -31,6 +31,7 @@ def populate_item(cur: psycopg.Cursor,file_path: str) :
         
         time_before = random.uniform(1, 90)
         created_at = current_date - timedelta(days=time_before)
+        low_stock_bar = max(int(total_amount * 0.5), 1)
         
         # value = max(random.gauss(1500, 500), 150)
         
@@ -45,8 +46,8 @@ def populate_item(cur: psycopg.Cursor,file_path: str) :
             else:
                 print(result)
                 raise ValueError(f"Category '{category}' not found in the category table.")
-            
-        cur.execute(insert_query, (name, sku, total_amount, total_amount, parse_cost(cost), category_id, location, True, created_at, created_at))
+
+        cur.execute(insert_query, (name, sku, total_amount, total_amount, parse_cost(cost), category_id, low_stock_bar, location, True, created_at, created_at))
 
 def scrawl_files(category_file_path, item_file_path):
     connection_parameters = {

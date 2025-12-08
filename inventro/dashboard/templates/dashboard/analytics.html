@@ -3,26 +3,8 @@
 {% block main %}
 
   <header class="topbar">
-    <h1 class="h5 mb-0">Inventory Management System</h1>
+    <h1 class="h5 mb-0">Analytics</h1>
   </header>
-
-  <section class="content container-fluid px-3 px-lg-4 py-3">
-    <h2 class="display-6 fs-2 mb-3">Analytics</h2>
-
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title mb-3">Stock Status Trends</h5>
-        <canvas id="statusTrends" height="120"></canvas>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title mb-3">Inventory Value Over Time</h5>
-        <canvas id="valueOverTime" height="120"></canvas>
-      </div>
-    </div>
-  </section>
 
   <section class="container py-4">
     <!-- Metric cards reused from dashboard -->
@@ -83,6 +65,22 @@
       </div>
     </div>
 
+    <section class="content container-fluid px-3 px-lg-4 py-3">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Inventory Value Over Time</h5>
+          <canvas id="valueOverTime" height="120"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Stock Status Trends</h5>
+          <canvas id="statusTrends" height="120"></canvas>
+        </div>
+      </div>
+    </section>
+
     <!-- Charts -->
     <div class="row g-3">
       <div class="col-12 col-xl-6">
@@ -102,29 +100,7 @@
         </div>
       </div>
     </div>
-    {% comment %} <!-- Charts (left as-is; your JS can call /api/metrics/ if needed) -->
-    <div class="row g-3">
-      <div class="col-12 col-xl-7">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h2 class="h6 mb-0">Inventory Trend</h2>
-            </div>
-            <canvas id="inventoryTrendChart" height="120"></canvas>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-xl-5">
-        <div class="card shadow-sm h-100">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h2 class="h6 mb-0">Items by Category</h2>
-            </div>
-            <canvas id="itemsByCategoryChart" height="120"></canvas>
-          </div>
-        </div>
-      </div>
-    </div> {% endcomment %}
+
   </section>
 
 
@@ -155,21 +131,123 @@
     const catCtx = document.getElementById('categoryChart').getContext('2d');
     const categoryLabels = [{% for c in cat_counts %}'{{ c.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     const categoryData = [{% for c in cat_counts %}{{ c.total }}{% if not forloop.last %}, {% endif %}{% endfor %}];
+
     const categoryChart = new Chart(catCtx, {
-      type: 'bar',
+      type: "pie",
       data: {
         labels: categoryLabels,
-        datasets: [{
+        datasets: [{ 
+          label: "Items",
           data: categoryData,
-          backgroundColor: '#0D6EFD',
-        }]
+          backgroundColor: [
+            '#c09117', '#2a6e5a', '#b94411', '#a2b53b',
+            '#de0050', '#aa4489', '#d144cb', '#236012',
+            '#e06620ff', '#db3037'
+          ],
+        }],
       },
       options: {
+        responsive: true,
         plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, ticks: { precision: 0 } }
-        }
-      }
+        scales: { 
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+          x: { grid: { display: false } }
+        },
+      },
     });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const elStatus = document.getElementById("statusTrends");
+      const elValue = document.getElementById("valueOverTime");
+
+      loadAnalyticsCharts(elStatus, elValue);
+    });
+
+    async function loadAnalyticsCharts(elStatus, elValue) {
+      if (!elStatus && !elValue) return;
+      if (!window.InventroAPI || !window.Chart) return;
+      
+      try {
+        const m = await InventroAPI.getMetrics();
+        
+        if (elStatus) {
+          // Destroy existing chart if it exists
+          if (window.statusTrendsChart?.destroy) {
+            window.statusTrendsChart.destroy();
+          }
+          window.statusTrendsChart = new Chart(elStatus, {
+            type: "line",
+            data: {
+              labels: m.statusTrends.labels,
+              datasets: (m.statusTrends.series || []).map((s, idx) => ({
+                label: s.label,
+                data: s.data,
+                tension: 0.3,
+                borderColor: idx === 0 ? 'rgb(75, 192, 192)' : idx === 1 ? 'rgb(255, 206, 86)' : 'rgb(255, 99, 132)',
+                backgroundColor: idx === 0 ? 'rgba(75, 192, 192, 0.1)' : idx === 1 ? 'rgba(255, 206, 86, 0.1)' : 'rgba(255, 99, 132, 0.1)',
+              })),
+            },
+            options: {
+              responsive: true,
+              interaction: { mode: "nearest", intersect: false },
+              plugins: {
+                legend: { display: true, position: 'top' }
+              },
+              scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { grid: { display: false } }
+              }
+            },
+          });
+        }
+        
+        if (elValue) {
+          // Destroy existing chart if it exists
+          if (window.valueOverTimeChart?.destroy) {
+            window.valueOverTimeChart.destroy();
+          }
+          window.valueOverTimeChart = new Chart(elValue, {
+            type: "line",
+            data: {
+              labels: m.valueOverTime.labels,
+              datasets: [
+                {
+                  label: "Inventory Value",
+                  data: m.valueOverTime.data,
+                  fill: true,
+                  borderColor: 'rgb(75, 192, 192)',
+                  backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                  tension: 0.4,
+                },
+              ],
+            },
+            options: { 
+              responsive: true, 
+              plugins: { legend: { display: false } },
+              scales: {
+                y: { 
+                  beginAtZero: false,
+                  grid: { color: 'rgba(0,0,0,0.05)' },
+                  ticks: {
+                    callback: function(value) {
+                      if (value >= 1000) {
+                        return '$' + (value / 1000).toFixed(1) + 'k';
+                      }
+                      return '$' + value.toFixed(0);
+                    }
+                  }
+                },
+                x: { grid: { display: false } }
+              }
+            },
+          });
+        }
+      } catch (e) {
+        console.warn("Analytics metrics fallback in use", e);
+      }
+    }
+
   </script>
 {% endblock %}
