@@ -97,7 +97,7 @@ The final application offered a set of features that directly supported the proj
   The same Docker images used for local development via `docker compose` can be deployed to Kubernetes with configurable replicas, readiness/liveness probes, and resource limits. This ensured dev/prod parity and demonstrated scalable, cloud-native delivery.
 
 - **Real-Time & Advanced Features (where implemented):**  
-  CI/CD pipelines were fully implemented with GitHub Actions. Automated backups ran via a Kubernetes CronJob. WebSocket-based alerts were explored and integrated where feasible to provide near real-time feedback on key events such as stock changes.
+  CI/CD pipelines were fully implemented with GitHub Actions. Automated backups ran via a Kubernetes CronJob.
 
 Taken together, these features fulfilled the course project requirements: a **stateful**, **containerized** application running on **Kubernetes** with **persistent storage**, **monitoring**, and **at least two advanced features** (CI/CD and automated backups).
 
