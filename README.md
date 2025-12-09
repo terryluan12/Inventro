@@ -153,6 +153,11 @@ Taken together, these features fulfilled the course project requirements: a **st
 
   <img src="assets/images/entity_relationships.png" width="1000" align="center">
 
+## Video demo
+
+[Watch the video demo](https://www.youtube.com/watch?v=Tmv-0NdmpjA)
+
+---
 
 ## User Guide
 
