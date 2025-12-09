@@ -16,7 +16,8 @@ python manage.py migrate --noinput
 echo "Creating Superuser..."
 python manage.py createsuperuser --noinput 
 
-if [[ $DEBUG != "0" ]]; then
+
+if [[ $DEBUG != "0" && $POPULATE_DATABASE != "0" ]]; then
 echo "Populating Database..."
 cd inventory/util
 python populate_database.py

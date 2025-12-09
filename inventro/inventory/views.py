@@ -125,8 +125,11 @@ def add_category(request):
     if request.method == "POST":
         name = request.POST.get("category-name")
         if name:
-            ItemCategory.objects.create(name=name)
-            messages.success(request, f"Category '{name}' added successfully.")
+            if not ItemCategory.objects.filter(name=name).exists():
+                ItemCategory.objects.create(name=name)
+                messages.success(request, f"Category '{name}' added successfully.")
+            else:
+                messages.error(request, f"Category '{name}' already exists.")
         else:
             messages.error(request, "Category name cannot be empty.")
     return redirect("dashboard_add_item")
@@ -200,6 +203,7 @@ def my_inventory_view(request):
 
     paginator = Paginator(inventory_items, per_page)
     inventory_items = paginator.get_page(page_number)
+    print(inventory_items)
 
     if 'HX-Request' in request.headers:
         return render(request, 'cart/partials/my_inventory_table.html', {'items': inventory_items})
