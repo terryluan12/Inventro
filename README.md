@@ -407,7 +407,7 @@ For deployment, you can easily deploy using Docker, and Kubernetes!
     `bash deploy.sh`
 
 ## Deployment Info
-Currently, Inventro is deployed at {Insert URL}
+Currently, Inventro is deployed at [inventro.terryluan.com](http://inventro.terryluan.com)
 
 
 ## Environment Variables
