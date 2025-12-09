@@ -557,33 +557,32 @@ Overall, Harsanjam was responsible for turning the core inventory and cart model
 Alexander focused on role-based access control (RBAC), inventory metadata and audit features, and documentation linking Inventro’s implementation to the ECE1779 cloud-native requirements. He also spent significant time debugging and stabilizing the local Django stack—including login, templates, and authentication—so the rest of the team could test the application reliably.
 
 - **Role-Based Access Control (RBAC) & User Flows**
- - Designed and implemented the RBAC layer used across the application.
- - Introduced role fields and helper utilities to categorize users as Admin, Manager, or Staff.
- - Integrated these roles into Django views, templates, and navigation.
- - Ensured protected routes (dashboard, inventory management, user administration) validate the logged-in user’s role before granting access.
- - Configured login redirect logic so users arrive at the appropriate dashboard after authentication and confirmed redirects correctly respect LOGIN_URL and LOGOUT_REDIRECT_URL.
+  - Designed and implemented the RBAC layer used across the application.
+  - Introduced role fields and helper utilities to categorize users as Admin, Manager, or Staff.
+  - Integrated these roles into Django views, templates, and navigation.
+  - Ensured protected routes (dashboard, inventory management, user administration) validate the logged-in user’s role before granting access.
+  - Configured login redirect logic so users arrive at the appropriate dashboard after authentication and confirmed redirects correctly respect LOGIN_URL and LOGOUT_REDIRECT_URL.
 
 - **Inventory Metadata & Audit Trail**
 
- - Extended the data model and views with inventory metadata and audit fields to improve traceability.
- - Added attributes such as created_by, updated_by, and last_updated timestamps to relevant models.
- - Ensured these fields are populated automatically through views and forms.
- - Surfaced this information in Django admin, API serializers, and where appropriate, the dashboard.
+  - Extended the data model and views with inventory metadata and audit fields to improve traceability.
+  - Added attributes such as created_by, updated_by, and last_updated timestamps to relevant models.
+  - Ensured these fields are populated automatically through views and forms.
+  - Surfaced this information in Django admin, API serializers, and where appropriate, the dashboard.
 
 - **Monitoring, Stateful Design & Documentation**
 
- - Authored substantial documentation linking the running system to ECE1779 expectations around persistence, monitoring, and advanced features.
- - Documented how PostgreSQL is persisted using DigitalOcean Volumes and PVCs.
- - Explained how the backup CronJob integrates with object storage and supports recovery workflows.
- - Outlined how provider metrics (DigitalOcean) and Kubernetes logs are used to monitor CPU, memory, and pod health.
+  - Authored substantial documentation linking the running system to ECE1779 expectations around persistence, monitoring, and advanced features.
+  - Documented how PostgreSQL is persisted using DigitalOcean Volumes and PVCs.
+  - Explained how the backup CronJob integrates with object storage and supports recovery workflows.
+  - Outlined how provider metrics (DigitalOcean) and Kubernetes logs are used to monitor CPU, memory, and pod health.
 
 - **Local Dev, Docker/Kubernetes Touchpoints & Testing**
- - Helped stabilize local development in support of RBAC and metadata work.
- - Updated settings, URLs, and templates to integrate cleanly with Django authentication.
- - Resolved template and static asset issues (including login.html and static path fixes).
- - Verified seeded demo accounts (e.g., admin@inventro.com, manager@inventro.com) behave correctly under the new role logic.
- - Tested the multi-container Docker Compose setup and validated Kubernetes manifests on his branch to ensure environment variables, migrations, and initial superuser creation function end-to-end.
-
+  - Helped stabilize local development in support of RBAC and metadata work.
+  - Updated settings, URLs, and templates to integrate cleanly with Django authentication.
+  - Resolved template and static asset issues (including login.html and static path fixes).
+  - Verified seeded demo accounts (e.g., admin@inventro.com, manager@inventro.com) behave correctly under the new role logic.
+  - Tested the multi-container Docker Compose setup and validated Kubernetes manifests on his branch to ensure environment variables, migrations, and initial superuser creation function end-to-end.
 
 ### Shubham Panchal 
 
