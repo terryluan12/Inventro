@@ -69,9 +69,15 @@ def dashboard_stats(request):
 
 
 @api_view(['GET'])
-def metrics(request):
-    now = timezone.now()
-
+def metrics(_):
+    num_active_items = Item.objects.filter(is_active=True).count()
+    if num_active_items == 0:
+        return Response({
+            'inventoryTrend': '[]',
+            'categoryCount': '[]',
+            'valueOverTime': '[]',
+            'categoryValueTrends': '[]',
+        })
     active_items = Item.objects.filter(is_active=True)
     items_dataframe = pd.DataFrame.from_records(active_items.values("name", "in_stock", "total_amount", "location", "cost", "category__name", "created_at"))
 

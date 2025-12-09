@@ -45,8 +45,6 @@ The project objectives were:
 - **DevOps & Automation:**  
   Implement CI/CD with GitHub Actions to automate build, test, and deployment of Docker images, and configure automated PostgreSQL backups using a Kubernetes CronJob.
 
-- **Stretch Real-Time Features (optional):**  
-  Explore real-time stock updates via Django Channels/WebSockets and serverless email notifications for low-stock alerts. These were treated as stretch goals and implemented partially where time allowed (WebSockets) rather than as core requirements.
 
 Overall, the final system met the core objectives: it was a stateful, containerized, Kubernetes-deployed application with persistent storage, monitoring, CI/CD, and automated backups, closely aligned with the original proposal.
 
@@ -90,7 +88,7 @@ The final application offered a set of features that directly supported the proj
   Users can assemble carts, add or remove items, and submit requests for stock movements through RESTful endpoints. This represents realistic warehouse workflows (e.g., picking orders, internal transfers) and showcased multi-entity state management in the database.
 
 - **Dashboarding:**  
-  Server-rendered dashboards summarize available items, recent activity, and quick links to common flows. Dashboards are built using Bootstrap and HTMX, with support for auto-refreshing stats and basic visualizations so operators could see the current state at a glance.
+  Server-rendered dashboards summarize available items, recent activity, and quick links to common flows. Dashboards are built using Bootstrap and HTMX, with support for basic visualizations so operators could see the current state at a glance.
 
 - **Persistence & Resilience:**  
   PostgreSQL data survives pod restarts through PVCs. Backup CronJobs exported snapshots to object storage, providing a recovery path in case of data corruption or accidental deletions.
@@ -99,9 +97,9 @@ The final application offered a set of features that directly supported the proj
   The same Docker images used for local development via `docker compose` can be deployed to Kubernetes with configurable replicas, readiness/liveness probes, and resource limits. This ensured dev/prod parity and demonstrated scalable, cloud-native delivery.
 
 - **Real-Time & Advanced Features (where implemented):**  
-  CI/CD pipelines were fully implemented with GitHub Actions. Automated backups ran via a Kubernetes CronJob. WebSocket-based alerts were explored and integrated where feasible to provide near real-time feedback on key events such as stock changes.
+  CI/CD pipelines were fully implemented with GitHub Actions. Automated backups ran via a Kubernetes CronJob.
 
-Taken together, these features fulfilled the course project requirements: a **stateful**, **containerized** application running on **Kubernetes** with **persistent storage**, **monitoring**, and **at least two advanced features** (CI/CD and automated backups, with optional WebSocket alerts).
+Taken together, these features fulfilled the course project requirements: a **stateful**, **containerized** application running on **Kubernetes** with **persistent storage**, **monitoring**, and **at least two advanced features** (CI/CD and automated backups).
 
 ## Fulfillment of Course Requirements
 
@@ -132,7 +130,7 @@ Taken together, these features fulfilled the course project requirements: a **st
   </tr>
   <tr>
     <td>Advanced Features (≥2)</td>
-    <td>CI/CD was implemented with GitHub Actions, automated backups were configured via a Kubernetes CronJob, and WebSocket-based alerts were explored as an optional enhancement.</td>
+    <td>CI/CD was implemented with GitHub Actions, automated backups were configured via a Kubernetes CronJob.</td>
   </tr>
 </table>
 
@@ -334,7 +332,7 @@ The **Dashboard** and **Analytics** sections provide a summarized view of the sy
   <img src="assets/images/user_guide/analytics.png" width="1000" alt=" Add User form for admin to create new users">
 </p>
 
-Both pages are powered by `/api/stats/` and `/api/metrics/` and automatically refresh every few seconds, so inventory changes are reflected without reloading the page.
+Both pages are powered by `/api/stats/` and `/api/metrics/`, so inventory changes are reflected without reloading the page.
 
 ---
 
@@ -365,7 +363,7 @@ The application container mounts the project directory, allowing the app to auto
 3. **Start services locally:**  
    `docker compose -f compose.dev.yml up --build`  
 4. **Access the app:**  
-    Web UI: `http://localhost:800`  
+    Web UI: `http://localhost:8000`  
     REST API: `http://localhost:8000/api/`
 
 ### Testing
@@ -409,7 +407,7 @@ For deployment, you can easily deploy using Docker, and Kubernetes!
     `bash deploy.sh`
 
 ## Deployment Info
-Currently, Inventro is deployed at {Insert URL}
+Currently, Inventro is deployed at [inventro.terryluan.com](http://inventro.terryluan.com)
 
 
 ## Environment Variables
@@ -459,33 +457,49 @@ Terry led the core backend integration and deployment foundations for Inventro. 
 
 - **Project Bootstrap & Core Apps**
   - Initialized the Django project and key apps (`inventory`, `cart`, `orders`, `users`).
-  - Integrated **Django REST Framework** and implemented the initial API endpoints for items and carts.
+  - Integrated Django REST Framework and implemented the initial API endpoints for items and carts.
   - Created and maintained `requirements.txt` to standardize dependencies for local development, Docker builds, and CI.
 
 - **Inventory, Auth & Cart Integration**
-  - Migrated and wired up the **inventory** and **login** pages to the Django backend.
+  - Migrated and wired up the inventory and login pages to the Django backend.
   - Connected the inventory table to the backend so items, pagination, and metadata are served from PostgreSQL.
   - Introduced a dedicated authentication/users app and set `LOGIN_URL` in `settings.py`, cleaning up how user data and login flows are handled.
   - Fixed multiple UI/UX issues (login page, sidebar highlighting, back button routing, naming consistency from “products” to “inventory”).
-  - Reviewed and **merged the `cart_page` branch**, ensuring the cart UI was correctly hooked up to the existing models, views, and templates.
+  - Reviewed and merged the `cart_page` branch, ensuring the cart UI was correctly hooked up to the existing models, views, and templates.
 
-- **Data Seeding & Populate Scripts**
+- **Domain Logic, Data Seeding & Bug Fixes**
   - Authored and iteratively refined database populate scripts (`populate.py`, `populate_database.py`) to seed items and metadata for testing.
-  - Added support for **cost** and **location** fields in the populate logic to match the evolving Item model.
+  - Added support for `cost` and `location` fields in the populate logic to match the evolving `Item` model.
   - Hooked database population into `entrypoint.sh` and adjusted Docker Compose startup so developers could get a usable environment with realistic test data in one command.
+  - Fixed several edge-case bugs in production, including:
+    - A crash when the system had no active items remaining.
+    - `add_category` failures when users attempted to create duplicate categories.
+    - Cleanup of demo data fallbacks and removing the unused `reorder_level` field so the data model matched the final feature set.
+  - Updated metrics logic to align with the final dashboard/analytics implementation.
 
 - **Docker, Nginx & Local Dev Experience**
-  - Fixed and stabilized the **Dockerfile** and web container configuration.
+  - Fixed and stabilized the Dockerfile and web container configuration.
   - Introduced an Nginx container and related configuration to support a more production-like setup.
   - Reorganized the Django code into an inner `inventro` directory to simplify imports and deployment.
-  - Added separate **dev and prod Docker Compose files** and tuned volumes so code changes reflect correctly in the dev environment.
+  - Added separate dev and prod Docker Compose files and tuned volumes so code changes reflect correctly in the dev environment.
 
-- **Kubernetes Manifests, CronJob & Repo Integration**
-  - Added and refactored Kubernetes manifests, including Nginx objects and namespace changes to `inventro`, and split components into clear YAML files (deployments, services, etc.).
-  - **Implemented and later fixed the PostgreSQL backup CronJob Kubernetes file**, ensuring scheduled dumps to object storage work as intended.
+- **CI/CD, Kubernetes Manifests & Production Deployment**
+  - Designed and iterated on the GitHub Actions CI/CD pipeline:
+    - Created a dedicated workflow that builds images, pushes to the DigitalOcean Container Registry, and then deploys to Kubernetes using `kubectl`.
+    - Added cluster configuration and `kubectl` steps directly into CI so each push to `main` can trigger a full deployment.
+    - Added a step to force redeployment of Kubernetes workloads on each successful run to ensure the latest image is always rolled out.
+    - Debugged and fixed issues where deployments failed on registry push errors, temporarily disabling pushes while diagnosing and then restoring the full pipeline.
+  - Added and refactored Kubernetes manifests, including Nginx objects and namespace changes to `inventro`, and split components into clear YAML files (Deployments, Services, PVCs, Secrets, CronJobs).
+  - Implemented and later fixed the PostgreSQL backup CronJob Kubernetes file, ensuring scheduled dumps to object storage work as intended.
+  - Added an Ingress object and URL secret fixes so the application could be reached at `inventro.terryluan.com`, tying DNS, TLS, and cluster routing together.
   - Authored and reviewed multiple merge commits (e.g., integrating Shubham’s CI/CD + Kubernetes work, Alex’s RBAC/metadata branch, and the cart feature branch), resolving conflicts and keeping the `main` branch deployable.
 
-Overall, Terry owned the backbone of the project: he turned a bare Django app into a working, containerized service with connected front-end pages, realistic seed data, a functioning backup CronJob, and a clean path to Kubernetes deployment.
+- **Monitoring & Observability Setup**
+  - Added a `setup_monitoring` script and documentation describing how to enable provider monitoring for the cluster, then refined the script description after testing.
+  - Ensured that metrics and logs from DigitalOcean and Kubernetes were wired into the deployment story, so resource usage and pod health could be monitored alongside the app.
+
+Overall, Terry owned the backbone of the project: he turned a bare Django app into a working, containerized service with connected front-end pages, realistic seed data, a functioning backup CronJob, CI/CD and ingress-based production deployment, monitoring scripts, and clear documentation for running Inventro in both development and production.
+
 
 ### Harsanjam Saini
 Harsanjam’s work focused on the core stateful features (inventory and carts) and the advanced analytics/real-time behaviour. His contributions spanned from the initial UI prototype to the data-driven, real-time dashboard used in the final system, as well as debugging and testing of the CI/CD Pipeline through GitHub actions workflow (Advanced Feature #1).
@@ -522,14 +536,14 @@ Harsanjam’s work focused on the core stateful features (inventory and carts) a
   - Implemented the shared **frontend API client** (`api.js`) and UI helpers (`ui.js`, `app.js`) to make the dashboard, inventory, add-item, and analytics pages fully **data-driven** instead of static:
     - API client supports `login()`, full inventory CRUD, and `getStats()/getMetrics()` calls.
     - UI helpers handle toast notifications, form serialization, dynamic table rendering, and chart setup.
-  - Wired the dashboard and analytics to the stats/metrics API and added **auto-refresh polling**:
+  - Wired the dashboard and analytics to the stats/metrics API:
     - `setupDashboard()` and `setupAnalytics()` poll `/api/stats/` and `/api/metrics/` every 10 seconds.
     - Charts and stat boxes update automatically, providing near real-time feedback on stock levels and trends without page reloads.
   - Made the API base URL dynamic (`window.location.origin`) so the same JS works on localhost and the DigitalOcean/Kubernetes deployment.
 
 - **Architecture & Repo Quality**
   - Authored a detailed **architecture analysis** (persistent storage on DO Volumes, recommended PostgreSQL indexes, system diagram including CI/CD and backup layers), tying the implementation directly back to the course’s cloud-native and observability objectives.
-  - Cleaned up redundant prototype and documentation files as the project matured, keeping the repository focused on the final implementation.
+
 
 Overall, Harsanjam was responsible for turning the core inventory and cart models into a **usable, secure, and observable system**, from UI and workflows, through REST APIs and security, to real-time dashboard analytics that demonstrate the project’s advanced features.
 
@@ -547,36 +561,51 @@ To improve observability of inventory changes, Alexander extended the data model
 
 Monitoring, Stateful Design & Documentation
 
-Alexander authored substantial portions of the documentation connecting the running system to ECE1779’s expectations around persistence, monitoring, and advanced features. He documented how PostgreSQL data is persisted using DigitalOcean Volumes and PVCs, how the backup CronJob integrates with object storage, and how state is preserved across pod restarts and rolling deployments. He also outlined how provider metrics (DigitalOcean graphs) and Kubernetes logs are used to monitor CPU, memory, and pod health, and how these tools align with realistic production workflows. This content appears in the Motivation, Objectives, Technical Stack, and Stateful Design/Monitoring sections of the final report.
+Alexander authored substantial portions of the documentation connecting the running system to ECE1779’s expectations around persistence, monitoring, and advanced features. He documented how PostgreSQL data is persisted using DigitalOcean Volumes and PVCs, how the backup CronJob integrates with object storage, and how state is preserved across pod restarts and rolling deployments. He also outlined how provider metrics (DigitalOcean graphs) and Kubernetes logs are used to monitor CPU, memory, and pod health, and how these tools align with realistic production workflows.
 
 Local Dev, Docker/Kubernetes Touchpoints & Testing
 
 Alexander helped stabilize local development in support of his RBAC and metadata work. He updated settings, URLs, and templates to integrate cleanly with Django authentication, resolved template and static asset issues (including login.html and static path fixes), and verified that seeded demo accounts (e.g., admin@inventro.com, manager@inventro.com) behave correctly under the new role logic. He also tested the multi-container setup (Django + PostgreSQL via Docker Compose) and validated Kubernetes manifests on his branch to ensure environment variables, migrations, and initial superuser creation function end-to-end.
 
-Polish, Debugging & Presentation
-
-Beyond implementation, Alexander contributed to polishing the project for a clear and reliable demo. He refined the login experience and branding (including the Inventro logo), prepared slide content and speaking notes emphasizing automated backups and CI/CD as advanced features, and reviewed report sections to ensure the narrative accurately reflects what was deployed. In the final weeks, he focused on last-mile debugging—addressing authentication errors, template resolution issues, and role permission edge cases—so the full demo flow (login, dashboard, inventory, and carts) runs smoothly for TAs and instructors.
 
 ### Shubham Panchal 
 
-Shubham led the **cloud deployment and orchestration foundations** for Inventro and implemented core **Django inventory and authentication flows**. He focused on turning the application into a reliably deployable, locally testable cloud-native service while also shaping the day-to-day user experience through inventory and auth features. 
+Shubham led the **cloud deployment and orchestration foundations** for Inventro and implemented core **Django inventory and authentication flows**. He focused on making the application reliably deployable, locally testable, and easy to use day-to-day.
 
 - **Cloud Architecture, Kubernetes & Local Orchestration**
-  - Shubham designed the overall cloud architecture for Inventro as a containerized **Django + PostgreSQL** application running on **Kubernetes**. He wrote the initial Kubernetes manifests (Deployments, Services, Ingress, ConfigMaps/Secrets) that define how the web app and database run in the cluster, and ensured that the same configuration works cleanly on **local Kubernetes with Minikube**. This included validating Ingress rules, environment variables, and application startup in a real cluster. He also kept **Docker Compose** and Kubernetes setups aligned so developers can switch between docker-compose and Minikube without code changes, verifying that both paths run the application end-to-end. In addition, Shubham authored an initial **GitHub Actions workflow** to run Django checks and build/push Docker images, providing a concrete starting point for the team’s CI/CD pipeline. 
+  - Designed the cloud architecture for Inventro as a containerized **Django + PostgreSQL** application running on **Kubernetes**.
+  - Wrote the initial **Kubernetes manifests** (Deployments, Services, Ingress, ConfigMaps/Secrets) that define how the web app and database run in the cluster.
+  - Ensured the same configuration works cleanly on **local Kubernetes with Minikube**, validating Ingress rules, environment variables, and application startup in a real cluster.
+  - Kept **Docker Compose** and Kubernetes setups aligned so developers can switch between `docker-compose` and Minikube without code changes, and verified both paths run the application end-to-end.
 
-- **Inventory CRUD, Add Form & UI Enhancements** 
-  - On the application side, Shubham implemented the core **inventory management flows**. He added both “add inventory” and “delete inventory” functionality by wiring URLs, views, and templates so items can be created and removed cleanly in PostgreSQL. He built the **Add Inventory** form on the frontend with clearly named fields that map directly to the Django Item model and view parameters, keeping backend data handling straightforward and maintainable. To improve usability at scale, he added and tuned **pagination and filtering** for the inventory table so large item lists remain performant and easy to navigate. He also made **dropdowns and filter options dynamic**, ensuring they are populated from real backend data and remain consistent with the evolving Item model (including new fields such as cost or location). Along the way, he fixed multiple **UI/UX issues** on the inventory page, improving layout, alignment, and consistency across the dashboard. 
+- **Inventory CRUD, Add Form & UI Enhancements**
+  - Implemented the core **inventory management flows**, adding both “add inventory” and “delete inventory” functionality by wiring URLs, views, and templates so items can be created and removed cleanly in PostgreSQL.
+  - Introduced a **soft delete** pattern by adding an `is_active` field to the `Item` model and updating delete logic and queries so inventory lists only return entries where `is_active = True`, preserving historical data while hiding inactive items.
+  - Built the **Add Inventory** form on the frontend with clearly named fields that map directly to the Django `Item` model and view parameters, keeping backend data handling straightforward and maintainable.
+  - Added and tuned **pagination and filtering** so large item lists remain performant and easy to navigate.
+  - Made **dropdowns and filter options dynamic**, ensuring they are populated from real backend data and stay consistent with the evolving `Item` model (including cost, location, etc.).
+  - Fixed multiple **UI/UX issues** on the inventory page, improving layout, alignment, and consistency across the dashboard.
 
 - **Authentication, Login/Logout Flows & Navigation**
-  - Shubham refined the **authentication and navigation flows** using Django’s built-in auth framework. He configured the login logic so that, after successful authentication, users are redirected directly to the **dashboard** rather than a generic landing page. He also ensured that **logout** cleanly terminates the session and redirects back to the **login page**, providing a predictable and secure user experience. To prevent accidental access to protected views, he verified that routes such as the dashboard and inventory pages correctly respect authentication and cannot be accessed via browser back navigation after logout. These changes made the application’s entry points and navigation feel much closer to a production system. 
+  - Refined **authentication and navigation flows** using Django’s built-in auth framework.
+  - Configured login so that, after successful authentication, users are redirected directly to the **dashboard** rather than a generic landing page.
+  - Ensured **logout** cleanly terminates the session and redirects back to the **login page**, providing a predictable, secure user experience.
+  - Verified that protected routes such as the dashboard and inventory pages correctly respect authentication and cannot be accessed via browser back navigation after logout, making the app feel closer to a production system.
 
-- **Configuration, Secrets, Local Testing & Team Integration** 
-  - On the configuration side, Shubham centralized sensitive settings—such as database credentials and secret keys—into **environment variables and Kubernetes secrets**, aligning Inventro with good DevSecOps practices. He tuned Django settings (ALLOWED_HOSTS, debug flags, static file handling) so the same codebase runs correctly with **Docker Compose**, **Minikube**, and remote Kubernetes deployments. He spent time **testing and validating local Docker workflows**, ensuring that other teammates could reliably bring up the stack, run migrations, and exercise features like login and inventory without environment surprises. Shubham also collaborated on and reviewed changes that touched deployment, CI, and configuration, helping integrate work on **RBAC/metadata**, **cart features**, and **backup jobs** without breaking the cloud setup or local development experience. 
+- **Configuration, CI Debugging, Local Testing & Team Integration** 
+  - Centralized sensitive settings (database credentials, secret keys, etc.) into **environment variables and Kubernetes secrets**, aligning Inventro with good DevSecOps practices.
+  - Tuned Django settings (`ALLOWED_HOSTS`, debug flags, static file handling) so the same codebase runs correctly with **Docker Compose**, **Minikube**, and remote Kubernetes deployments.
+  - Tested and validated **local Docker workflows**, ensuring teammates could reliably bring up the stack, run migrations, and exercise features like login and inventory without environment surprises.
+  - Helped **investigate and debug early GitHub Actions/CI issues** (e.g., Django import and path problems), providing logs, fixes, and suggestions that gave the team a clearer starting point for a future CI/CD pipeline.
+  - Collaborated on and reviewed changes touching deployment and configuration, helping integrate work on **RBAC/metadata**, **cart features**, and **backup jobs** without breaking the cloud setup or local development.
 
 - **Polish, Debugging & Presentation Support** 
-  - Beyond pure implementation, Shubham contributed to **stabilizing and presenting** the system. He helped debug environment and deployment issues that affected demos, verified that key flows (login, dashboard, inventory operations) worked reliably in both Docker Compose and Minikube, and supported the team in preparing **presentations and walkthroughs** that highlighted the project’s cloud-native aspects. By combining infrastructure work with hands-on testing and demo preparation, he helped ensure that Inventro not only deployed successfully but also **looked and behaved like a polished, production-ready application** during evaluations. 
+  - Helped debug environment and deployment issues that affected demos and day-to-day testing.
+  - Verified that key flows (login, dashboard, inventory operations) worked reliably in both Docker Compose and Minikube.
+  - Supported the team in preparing **presentations and walkthroughs** that highlighted the project’s cloud-native architecture and deployment story, helping ensure Inventro both **ran well and presented as a polished, production-ready application** during evaluations.
 
-Overall, Shubham owned the **cloud and delivery backbone** of Inventro and the **core inventory/auth flows**: he ensured the project runs smoothly via **Docker Compose and Minikube**, provided an initial CI workflow for future automation, and delivered a clean, testable inventory experience backed by Django and PostgreSQL.
+Overall, Shubham owned the **cloud and delivery backbone** of Inventro and the **core inventory/auth flows**: he ensured the project runs smoothly via **Docker Compose and Minikube** and delivered a clean, testable inventory experience backed by Django and PostgreSQL.
+
 
 ## Lessons Learned and Concluding Remarks
 

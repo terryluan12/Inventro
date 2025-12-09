@@ -34,6 +34,8 @@ spec:
           env:
             - name: GUNICORN_CMD_ARGS
               value: "--access-logfile - --error-logfile -"
+            - name: POPULATE_DATABASE
+              value: "0"
           envFrom:
             - configMapRef:
                 name: inventro-db-config
@@ -50,3 +52,7 @@ spec:
             limits:
               cpu: "200m"
               memory: "512Mi"
+
+  # Uncomment the following lines if using a private container registry
+  # imagePullSecrets:
+  #   - name: inventro-registry
