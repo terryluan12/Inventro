@@ -7,7 +7,11 @@ kubectl apply -f namespace.yaml
 echo "Applying secrets and configs..."
 kubectl apply -f config
 kubectl apply -f secrets/django-secret.yaml
-kubectl apply -f secrets/docker-reg.yaml
+echo "Are you using a Private Docker Registry? (y/N)"
+read use_private_registry
+if [ "$use_private_registry" == "y" ]; then
+    kubectl apply -f secrets/docker-reg.yaml # Uncomment if using private Docker registry
+fi
 kubectl apply -f secrets/postgres-secret.yaml
 kubectl apply -f secrets/do-spaces-secret.yaml
 
@@ -20,26 +24,27 @@ kubectl apply -f hpa.yaml
 kubectl apply -f claim.yaml
 kubectl apply -f cronjob-backup.yaml
 
-echo "Waiting for Inventro service IP initialization..."
-sleep 30
-while [[ $(kubectl -n inventro get svc inventro-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}') == "" ]]; do
-    echo "Waiting..."
-    sleep 15
-done
-echo "Service IP initialized."
 
-ip=$(kubectl -n inventro get svc inventro-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.1/deploy/static/provider/cloud/deploy.yaml
 
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=120s
 
-kubectl -n inventro create secret generic inventro-url-secret --from-literal=CSRF_TRUSTED_ORIGIN="http://$ip" --from-literal=ALLOWED_HOST="$ip"
+ip=$(kubectl -n ingress-nginx get svc ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+kubectl -n inventro create secret generic inventro-url-secret --from-literal=TRUSTED_ORIGIN="http://$ip" --from-literal=ALLOWED_HOST="$ip"
 
 echo "Starting web deployments..."
 kubectl apply -f deployments/web-deployment.yaml
 
-while [[ $(kubectl -n inventro get pods -l app=inventro-web -o jsonpath='{.items[0].status.phase}') != "Running" ]]; do
-    echo "Waiting for web pod readiness..."
-    sleep 30
-done
+kubectl wait --namespace inventro \
+  --for=condition=ready pod \
+  --selector=app=inventro-web \
+  --timeout=120s
+
+kubectl apply -f ingress.yaml
 
 sleep 20
 echo "Deployment complete. Access the application at http://$ip"

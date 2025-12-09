@@ -4,7 +4,7 @@ metadata:
   name: inventro-service
   namespace: inventro
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: inventro-web
   ports:

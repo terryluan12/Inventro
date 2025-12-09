@@ -22,10 +22,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django_insecure_key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", False)
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOST', 'localhost')]
-CSRF_TRUSTED_ORIGINS = [os.getenv('CSRF_TRUSTED_ORIGIN', 'http://localhost:8000')]
-
-
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOST', 'localhost'), 'inventro.terryluan.com']
+CSRF_TRUSTED_ORIGINS = [os.getenv('TRUSTED_ORIGIN', 'http://localhost:8000'), 'http://inventro.terryluan.com']
+CORS_ORIGIN_WHITELIST = ['http://localhost:8000', 'http://localhost:9944', 'http://inventro.terryluan.com']
 # Application definition
 
 # Apps
@@ -41,22 +40,26 @@ INSTALLED_APPS = [
     'channels',
     'inventory',
     'rest_framework',
+    'corsheaders',
     'django.contrib.humanize',
 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
 ]
 
 ROOT_URLCONF = "inventro.urls"
+
 
 
 
