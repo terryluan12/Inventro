@@ -568,15 +568,12 @@ To improve observability of inventory changes, Alexander extended the data model
 
 Monitoring, Stateful Design & Documentation
 
-Alexander authored substantial portions of the documentation connecting the running system to ECE1779’s expectations around persistence, monitoring, and advanced features. He documented how PostgreSQL data is persisted using DigitalOcean Volumes and PVCs, how the backup CronJob integrates with object storage, and how state is preserved across pod restarts and rolling deployments. He also outlined how provider metrics (DigitalOcean graphs) and Kubernetes logs are used to monitor CPU, memory, and pod health, and how these tools align with realistic production workflows. This content appears in the Motivation, Objectives, Technical Stack, and Stateful Design/Monitoring sections of the final report.
+Alexander authored substantial portions of the documentation connecting the running system to ECE1779’s expectations around persistence, monitoring, and advanced features. He documented how PostgreSQL data is persisted using DigitalOcean Volumes and PVCs, how the backup CronJob integrates with object storage, and how state is preserved across pod restarts and rolling deployments. He also outlined how provider metrics (DigitalOcean graphs) and Kubernetes logs are used to monitor CPU, memory, and pod health, and how these tools align with realistic production workflows.
 
 Local Dev, Docker/Kubernetes Touchpoints & Testing
 
 Alexander helped stabilize local development in support of his RBAC and metadata work. He updated settings, URLs, and templates to integrate cleanly with Django authentication, resolved template and static asset issues (including login.html and static path fixes), and verified that seeded demo accounts (e.g., admin@inventro.com, manager@inventro.com) behave correctly under the new role logic. He also tested the multi-container setup (Django + PostgreSQL via Docker Compose) and validated Kubernetes manifests on his branch to ensure environment variables, migrations, and initial superuser creation function end-to-end.
 
-Polish, Debugging & Presentation
-
-Beyond implementation, Alexander contributed to polishing the project for a clear and reliable demo. He refined the login experience and branding (including the Inventro logo), prepared slide content and speaking notes emphasizing automated backups and CI/CD as advanced features, and reviewed report sections to ensure the narrative accurately reflects what was deployed. In the final weeks, he focused on last-mile debugging—addressing authentication errors, template resolution issues, and role permission edge cases—so the full demo flow (login, dashboard, inventory, and carts) runs smoothly for TAs and instructors.
 
 ### Shubham Panchal 
 
