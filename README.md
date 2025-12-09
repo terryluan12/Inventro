@@ -88,7 +88,7 @@ The final application offered a set of features that directly supported the proj
   Users can assemble carts, add or remove items, and submit requests for stock movements through RESTful endpoints. This represents realistic warehouse workflows (e.g., picking orders, internal transfers) and showcased multi-entity state management in the database.
 
 - **Dashboarding:**  
-  Server-rendered dashboards summarize available items, recent activity, and quick links to common flows. Dashboards are built using Bootstrap and HTMX, with support for auto-refreshing stats and basic visualizations so operators could see the current state at a glance.
+  Server-rendered dashboards summarize available items, recent activity, and quick links to common flows. Dashboards are built using Bootstrap and HTMX, with support for basic visualizations so operators could see the current state at a glance.
 
 - **Persistence & Resilience:**  
   PostgreSQL data survives pod restarts through PVCs. Backup CronJobs exported snapshots to object storage, providing a recovery path in case of data corruption or accidental deletions.
@@ -332,7 +332,7 @@ The **Dashboard** and **Analytics** sections provide a summarized view of the sy
   <img src="assets/images/user_guide/analytics.png" width="1000" alt=" Add User form for admin to create new users">
 </p>
 
-Both pages are powered by `/api/stats/` and `/api/metrics/` and automatically refresh every few seconds, so inventory changes are reflected without reloading the page.
+Both pages are powered by `/api/stats/` and `/api/metrics/`, so inventory changes are reflected without reloading the page.
 
 ---
 
@@ -536,7 +536,7 @@ Harsanjam’s work focused on the core stateful features (inventory and carts) a
   - Implemented the shared **frontend API client** (`api.js`) and UI helpers (`ui.js`, `app.js`) to make the dashboard, inventory, add-item, and analytics pages fully **data-driven** instead of static:
     - API client supports `login()`, full inventory CRUD, and `getStats()/getMetrics()` calls.
     - UI helpers handle toast notifications, form serialization, dynamic table rendering, and chart setup.
-  - Wired the dashboard and analytics to the stats/metrics API and added **auto-refresh polling**:
+  - Wired the dashboard and analytics to the stats/metrics API:
     - `setupDashboard()` and `setupAnalytics()` poll `/api/stats/` and `/api/metrics/` every 10 seconds.
     - Charts and stat boxes update automatically, providing near real-time feedback on stock levels and trends without page reloads.
   - Made the API base URL dynamic (`window.location.origin`) so the same JS works on localhost and the DigitalOcean/Kubernetes deployment.
