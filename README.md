@@ -45,8 +45,6 @@ The project objectives were:
 - **DevOps & Automation:**  
   Implement CI/CD with GitHub Actions to automate build, test, and deployment of Docker images, and configure automated PostgreSQL backups using a Kubernetes CronJob.
 
-- **Stretch Real-Time Features (optional):**  
-  Explore real-time stock updates via Django Channels/WebSockets and serverless email notifications for low-stock alerts. These were treated as stretch goals and implemented partially where time allowed (WebSockets) rather than as core requirements.
 
 Overall, the final system met the core objectives: it was a stateful, containerized, Kubernetes-deployed application with persistent storage, monitoring, CI/CD, and automated backups, closely aligned with the original proposal.
 
@@ -101,7 +99,7 @@ The final application offered a set of features that directly supported the proj
 - **Real-Time & Advanced Features (where implemented):**  
   CI/CD pipelines were fully implemented with GitHub Actions. Automated backups ran via a Kubernetes CronJob. WebSocket-based alerts were explored and integrated where feasible to provide near real-time feedback on key events such as stock changes.
 
-Taken together, these features fulfilled the course project requirements: a **stateful**, **containerized** application running on **Kubernetes** with **persistent storage**, **monitoring**, and **at least two advanced features** (CI/CD and automated backups, with optional WebSocket alerts).
+Taken together, these features fulfilled the course project requirements: a **stateful**, **containerized** application running on **Kubernetes** with **persistent storage**, **monitoring**, and **at least two advanced features** (CI/CD and automated backups).
 
 ## Fulfillment of Course Requirements
 
@@ -132,7 +130,7 @@ Taken together, these features fulfilled the course project requirements: a **st
   </tr>
   <tr>
     <td>Advanced Features (≥2)</td>
-    <td>CI/CD was implemented with GitHub Actions, automated backups were configured via a Kubernetes CronJob, and WebSocket-based alerts were explored as an optional enhancement.</td>
+    <td>CI/CD was implemented with GitHub Actions, automated backups were configured via a Kubernetes CronJob.</td>
   </tr>
 </table>
 
