@@ -543,7 +543,7 @@ Harsanjam’s work focused on the core stateful features (inventory and carts) a
 
 - **Architecture & Repo Quality**
   - Authored a detailed **architecture analysis** (persistent storage on DO Volumes, recommended PostgreSQL indexes, system diagram including CI/CD and backup layers), tying the implementation directly back to the course’s cloud-native and observability objectives.
-  - Cleaned up redundant prototype and documentation files as the project matured, keeping the repository focused on the final implementation.
+
 
 Overall, Harsanjam was responsible for turning the core inventory and cart models into a **usable, secure, and observable system**, from UI and workflows, through REST APIs and security, to real-time dashboard analytics that demonstrate the project’s advanced features.
 
