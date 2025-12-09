@@ -155,7 +155,7 @@ Taken together, these features fulfilled the course project requirements: a **st
 
 ## Video demo
 
-[Watch the video demo](https://www.youtube.com/watch?v=Tmv-0NdmpjA)
+[Watch the video demo](https://youtu.be/mI0T7wHV_TY)
 
 ---
 
