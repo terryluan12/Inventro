@@ -46,7 +46,6 @@ kubectl wait --namespace inventro \
 
 kubectl apply -f ingress.yaml
 
-sleep 20
-echo "Deployment complete. Access the application at http://$ip"
+echo "Deployment complete. The external IP of the Ingress is $ip"
 echo "To remove the deployment, run: kubectl delete namespace inventro"
 

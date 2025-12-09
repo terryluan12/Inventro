@@ -12,7 +12,6 @@ from django.utils import timezone
 from datetime import timedelta
 from inventory.models import Item, ItemCategory
 from django.db.models import F
-import json
 
 from .api_views import metrics as get_other_metrics
 
