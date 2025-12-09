@@ -70,8 +70,8 @@ def dashboard_stats(request):
 
 @api_view(['GET'])
 def metrics(_):
-    no_active_items = Item.objects.filter(is_active=False).count()
-    if no_active_items == Item.objects.count():
+    num_active_items = Item.objects.filter(is_active=True).count()
+    if num_active_items == 0:
         return Response({
             'inventoryTrend': '[]',
             'categoryCount': '[]',
