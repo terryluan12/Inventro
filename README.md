@@ -459,33 +459,56 @@ Terry led the core backend integration and deployment foundations for Inventro. 
 
 - **Project Bootstrap & Core Apps**
   - Initialized the Django project and key apps (`inventory`, `cart`, `orders`, `users`).
-  - Integrated **Django REST Framework** and implemented the initial API endpoints for items and carts.
+  - Integrated Django REST Framework and implemented the initial API endpoints for items and carts.
   - Created and maintained `requirements.txt` to standardize dependencies for local development, Docker builds, and CI.
 
 - **Inventory, Auth & Cart Integration**
-  - Migrated and wired up the **inventory** and **login** pages to the Django backend.
+  - Migrated and wired up the inventory and login pages to the Django backend.
   - Connected the inventory table to the backend so items, pagination, and metadata are served from PostgreSQL.
   - Introduced a dedicated authentication/users app and set `LOGIN_URL` in `settings.py`, cleaning up how user data and login flows are handled.
   - Fixed multiple UI/UX issues (login page, sidebar highlighting, back button routing, naming consistency from “products” to “inventory”).
-  - Reviewed and **merged the `cart_page` branch**, ensuring the cart UI was correctly hooked up to the existing models, views, and templates.
+  - Reviewed and merged the `cart_page` branch, ensuring the cart UI was correctly hooked up to the existing models, views, and templates.
 
-- **Data Seeding & Populate Scripts**
+- **Domain Logic, Data Seeding & Bug Fixes**
   - Authored and iteratively refined database populate scripts (`populate.py`, `populate_database.py`) to seed items and metadata for testing.
-  - Added support for **cost** and **location** fields in the populate logic to match the evolving Item model.
+  - Added support for `cost` and `location` fields in the populate logic to match the evolving `Item` model.
   - Hooked database population into `entrypoint.sh` and adjusted Docker Compose startup so developers could get a usable environment with realistic test data in one command.
+  - Fixed several edge-case bugs in production, including:
+    - A crash when the system had no active items remaining.
+    - `add_category` failures when users attempted to create duplicate categories.
+    - Cleanup of demo data fallbacks and removing the unused `reorder_level` field so the data model matched the final feature set.
+  - Updated metrics logic to align with the final dashboard/analytics implementation.
 
 - **Docker, Nginx & Local Dev Experience**
-  - Fixed and stabilized the **Dockerfile** and web container configuration.
+  - Fixed and stabilized the Dockerfile and web container configuration.
   - Introduced an Nginx container and related configuration to support a more production-like setup.
   - Reorganized the Django code into an inner `inventro` directory to simplify imports and deployment.
-  - Added separate **dev and prod Docker Compose files** and tuned volumes so code changes reflect correctly in the dev environment.
+  - Added separate dev and prod Docker Compose files and tuned volumes so code changes reflect correctly in the dev environment.
 
-- **Kubernetes Manifests, CronJob & Repo Integration**
-  - Added and refactored Kubernetes manifests, including Nginx objects and namespace changes to `inventro`, and split components into clear YAML files (deployments, services, etc.).
-  - **Implemented and later fixed the PostgreSQL backup CronJob Kubernetes file**, ensuring scheduled dumps to object storage work as intended.
+- **CI/CD, Kubernetes Manifests & Production Deployment**
+  - Designed and iterated on the GitHub Actions CI/CD pipeline:
+    - Created a dedicated workflow that builds images, pushes to the DigitalOcean Container Registry, and then deploys to Kubernetes using `kubectl`.
+    - Added cluster configuration and `kubectl` steps directly into CI so each push to `main` can trigger a full deployment.
+    - Added a step to force redeployment of Kubernetes workloads on each successful run to ensure the latest image is always rolled out.
+    - Debugged and fixed issues where deployments failed on registry push errors, temporarily disabling pushes while diagnosing and then restoring the full pipeline.
+  - Added and refactored Kubernetes manifests, including Nginx objects and namespace changes to `inventro`, and split components into clear YAML files (Deployments, Services, PVCs, Secrets, CronJobs).
+  - Implemented and later fixed the PostgreSQL backup CronJob Kubernetes file, ensuring scheduled dumps to object storage work as intended.
+  - Added an Ingress object and URL secret fixes so the application could be reached at `inventro.terryluan.com`, tying DNS, TLS, and cluster routing together.
   - Authored and reviewed multiple merge commits (e.g., integrating Shubham’s CI/CD + Kubernetes work, Alex’s RBAC/metadata branch, and the cart feature branch), resolving conflicts and keeping the `main` branch deployable.
 
-Overall, Terry owned the backbone of the project: he turned a bare Django app into a working, containerized service with connected front-end pages, realistic seed data, a functioning backup CronJob, and a clean path to Kubernetes deployment.
+- **Monitoring & Observability Setup**
+  - Added a `setup_monitoring` script and documentation describing how to enable provider monitoring for the cluster, then refined the script description after testing.
+  - Ensured that metrics and logs from DigitalOcean and Kubernetes were wired into the deployment story, so resource usage and pod health could be monitored alongside the app.
+
+- **Documentation, Screenshots & Guides**
+  - Updated the README, Deployment Guide, and Development Guide, including:
+    - Renaming and restructuring the deployment section into a clearer “Deployment Guide”.
+    - Adding a short blurb explaining how to deploy via Docker and Kubernetes.
+    - Adjusting environment variable defaults to be safer and more realistic.
+  - Collected and embedded the final UI screenshots into the User Guide (login, inventory, “Add Item”, cart, “My Inventory”, and “Add User”) so the documentation reflects the actual deployed system.
+
+Overall, Terry owned the backbone of the project: he turned a bare Django app into a working, containerized service with connected front-end pages, realistic seed data, a functioning backup CronJob, CI/CD and ingress-based production deployment, monitoring scripts, and clear documentation for running Inventro in both development and production.
+
 
 ### Harsanjam Saini
 Harsanjam’s work focused on the core stateful features (inventory and carts) and the advanced analytics/real-time behaviour. His contributions spanned from the initial UI prototype to the data-driven, real-time dashboard used in the final system, as well as debugging and testing of the CI/CD Pipeline through GitHub actions workflow (Advanced Feature #1).
