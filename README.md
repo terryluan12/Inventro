@@ -554,24 +554,35 @@ Overall, Harsanjam was responsible for turning the core inventory and cart model
 
 ### Alexander Vicol
 
-Alexander focused on role-based access control (RBAC), inventory metadata and audit features, and the documentation linking Inventro’s implementation to the ECE1779 cloud-native requirements. He also spent significant time debugging and stabilizing the local Django stack—including login, templates, and authentication—so the rest of the team could test the application reliably.
+Alexander focused on role-based access control (RBAC), inventory metadata and audit features, and documentation linking Inventro’s implementation to the ECE1779 cloud-native requirements. He also spent significant time debugging and stabilizing the local Django stack—including login, templates, and authentication—so the rest of the team could test the application reliably.
 
-Role-Based Access Control & User Flows
+- **Role-Based Access Control (RBAC) & User Flows**
+ - Designed and implemented the RBAC layer used across the application.
+ - Introduced role fields and helper utilities to categorize users as Admin, Manager, or Staff.
+ - Integrated these roles into Django views, templates, and navigation.
+ - Ensured protected routes (dashboard, inventory management, user administration) validate the logged-in user’s role before granting access.
+ - Configured login redirect logic so users arrive at the appropriate dashboard after authentication and confirmed redirects correctly respect LOGIN_URL and LOGOUT_REDIRECT_URL.
 
-Alexander designed and implemented the RBAC layer used across the application. He introduced role fields and helper utilities to categorize users as Admin, Manager, or Staff, then integrated these roles into Django views, templates, and navigation. Protected routes such as the dashboard, inventory management, and user administration now validate the logged-in user’s role before granting access. This ensures only authorized users can perform sensitive operations like adding or editing inventory or managing accounts. He also configured login redirect logic so users arrive at the appropriate dashboard after authentication and confirmed that redirects correctly respect LOGIN_URL and LOGOUT_REDIRECT_URL.
+- **Inventory Metadata & Audit Trail**
 
-Metadata & Audit Trail for Inventory
+ - Extended the data model and views with inventory metadata and audit fields to improve traceability.
+ - Added attributes such as created_by, updated_by, and last_updated timestamps to relevant models.
+ - Ensured these fields are populated automatically through views and forms.
+ - Surfaced this information in Django admin, API serializers, and where appropriate, the dashboard.
 
-To improve observability of inventory changes, Alexander extended the data model and views with additional metadata and audit fields. He added attributes such as created_by, updated_by, and last_updated timestamps to relevant models and ensured they are populated automatically through views and forms. This information is surfaced in the admin, API serializers, and, where appropriate, the dashboard, allowing managers to see who made changes and when. These updates directly support the stateful application and observability objectives by making item histories and user actions more transparent.
+- **Monitoring, Stateful Design & Documentation**
 
-Monitoring, Stateful Design & Documentation
+ - Authored substantial documentation linking the running system to ECE1779 expectations around persistence, monitoring, and advanced features.
+ - Documented how PostgreSQL is persisted using DigitalOcean Volumes and PVCs.
+ - Explained how the backup CronJob integrates with object storage and supports recovery workflows.
+ - Outlined how provider metrics (DigitalOcean) and Kubernetes logs are used to monitor CPU, memory, and pod health.
 
-Alexander authored substantial portions of the documentation connecting the running system to ECE1779’s expectations around persistence, monitoring, and advanced features. He documented how PostgreSQL data is persisted using DigitalOcean Volumes and PVCs, how the backup CronJob integrates with object storage, and how state is preserved across pod restarts and rolling deployments. He also outlined how provider metrics (DigitalOcean graphs) and Kubernetes logs are used to monitor CPU, memory, and pod health, and how these tools align with realistic production workflows.
-
-Local Dev, Docker/Kubernetes Touchpoints & Testing
-
-Alexander helped stabilize local development in support of his RBAC and metadata work. He updated settings, URLs, and templates to integrate cleanly with Django authentication, resolved template and static asset issues (including login.html and static path fixes), and verified that seeded demo accounts (e.g., admin@inventro.com, manager@inventro.com) behave correctly under the new role logic. He also tested the multi-container setup (Django + PostgreSQL via Docker Compose) and validated Kubernetes manifests on his branch to ensure environment variables, migrations, and initial superuser creation function end-to-end.
-
+- **Local Dev, Docker/Kubernetes Touchpoints & Testing**
+ - Helped stabilize local development in support of RBAC and metadata work.
+ - Updated settings, URLs, and templates to integrate cleanly with Django authentication.
+ - Resolved template and static asset issues (including login.html and static path fixes).
+ - Verified seeded demo accounts (e.g., admin@inventro.com, manager@inventro.com) behave correctly under the new role logic.
+ - Tested the multi-container Docker Compose setup and validated Kubernetes manifests on his branch to ensure environment variables, migrations, and initial superuser creation function end-to-end.
 
 ### Shubham Panchal 
 
