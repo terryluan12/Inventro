@@ -28,7 +28,7 @@ echo "$droplets" | jq -c '.[]' | while read item; do
                 "email":["'$EMAIL'"]
               },
               "compare":"GreaterThan",
-              "description":"CPU Alert for droplet $droplet_name",
+              "description":"CPU Alert for droplet '$droplet_name'",
               "enabled":true,
               "entities":["'$droplet_id'"],
               "tags":["droplet_tag"],
@@ -47,7 +47,7 @@ echo "$droplets" | jq -c '.[]' | while read item; do
                 "email":["'$EMAIL'"]
               },
               "compare":"GreaterThan",
-              "description":"Disk Utilization Alert for droplet $droplet_name",
+              "description":"Disk Utilization Alert for droplet '$droplet_name'",
               "enabled":true,
               "entities":["'$droplet_id'"],
               "tags":["droplet_tag"],
@@ -65,7 +65,7 @@ echo "$droplets" | jq -c '.[]' | while read item; do
                 "email":["'$EMAIL'"]
               },
               "compare":"GreaterThan",
-              "description":"Memory Alert for droplet $droplet_name",
+              "description":"Memory Alert for droplet '$droplet_name'",
               "enabled":true,
               "entities":["'$droplet_id'"],
               "tags":["droplet_tag"],
